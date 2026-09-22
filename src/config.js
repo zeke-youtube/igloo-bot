@@ -20,6 +20,9 @@ module.exports = {
   typingChannelId: () => process.env.TYPING_CHANNEL_ID || null,
   ktvCategoryId: () => process.env.KTV_CATEGORY_ID,
   ktvRentalPrice: () => Number.isInteger(Number(process.env.KTV_RENTAL_PRICE)) && Number(process.env.KTV_RENTAL_PRICE) >= 0 ? Number(process.env.KTV_RENTAL_PRICE) : 5,
+  radioGuildId: () => process.env.RADIO_GUILD_ID || process.env.GUILD_ID || null,
+  radioVoiceChannelId: () => process.env.RADIO_VOICE_CHANNEL_ID || null,
+  radioAudioFile: () => process.env.RADIO_AUDIO_FILE || './lofi.mp3',
   pengEmoji: () => process.env.PIKAPENG_EMOJI_ID && /^\d{17,20}$/.test(process.env.PIKAPENG_EMOJI_ID) ? `<:pikapeng:${process.env.PIKAPENG_EMOJI_ID}>` : '<:PikaPeng:1551565899331538975>',
   staffRoleIds: () => csv(process.env.STAFF_ROLE_IDS || process.env.STAFF_ROLE_ID),
   allowAnnouncementMentions: () => process.env.ALLOW_ANNOUNCEMENT_MENTIONS === 'true'
