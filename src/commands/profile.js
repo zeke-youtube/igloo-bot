@@ -1,10 +1,11 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const economy = require('../economy');
 const config = require('../config');
+const { getWaddleStats } = require('../waddle');
 
 // Waddle and achievement persistence do not exist in the current project yet.
 // Keep this provider isolated so those existing services can be connected later without changing the command UI.
-async function getProfileSections() { return { currentWaddleStreak: 0, longestWaddleStreak: 0, totalWaddles: 0, achievements: [] }; }
+async function getProfileSections(userId) { const waddle = await getWaddleStats(userId); return { currentWaddleStreak: waddle.currentStreak, longestWaddleStreak: waddle.longestStreak, totalWaddles: waddle.totalWaddles, achievements: [] }; }
 
 module.exports = {
   data: new SlashCommandBuilder().setName('profile').setDescription('View a PikaPeng profile.').addUserOption((option) => option.setName('user').setDescription('The member whose profile you want to view').setRequired(false)),
