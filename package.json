@@ -1,0 +1,9 @@
+{
+  "name": "pengbot",
+  "version": "1.0.0",
+  "description": "Official PikaStudio Discord bot with a playful PikaPeng personality.",
+  "main": "src/index.js",
+  "scripts": { "start": "node --watch src/index.js", "deploy": "node scripts/deploy-commands.js", "clear-commands": "node scripts/clear-commands.js" },
+  "engines": { "node": ">=18.17.0" },
+  "dependencies": { "discord.js": "^14.16.3", "dotenv": "^16.4.5" }
+}

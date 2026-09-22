@@ -1,0 +1,4 @@
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const config = require('../config');
+const sites = require('../data/sites.json');
+module.exports = { data: new SlashCommandBuilder().setName('pikastudiosites').setDescription('Browse official PikaStudio websites and projects.'), async execute(interaction) { const emoji = config.pengEmoji(); const embed = new EmbedBuilder().setColor(0x8b7bea).setTitle(`${emoji} PikaStudio Projects`).setDescription('Explore the official PikaStudio corner of the internet.').setFooter({ text: 'PengBot · Official PikaStudio links' }); for (const site of sites) embed.addFields({ name: `${site.emoji || '🔗'} ${site.name}`, value: `${site.description}\n[Visit ${site.name}](${site.url})${site.statusUrl ? ` · [Status](${site.statusUrl})` : ''}` }); return interaction.reply({ embeds: [embed] }); } };

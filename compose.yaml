@@ -1,0 +1,14 @@
+services:
+  igloobot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: igloobot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - igloobot_data:/app/src/data
+
+volumes:
+  igloobot_data:
