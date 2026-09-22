@@ -7,7 +7,7 @@ async function handleModal(i) {
   if (i.customId !== 'announcement_modal') return false;
   const title = i.fields.getTextInputValue('announcement_title'); const content = i.fields.getTextInputValue('announcement_content'); const link = i.fields.getTextInputValue('announcement_link'); const footer = i.fields.getTextInputValue('announcement_footer');
   const safe = (value) => config.allowAnnouncementMentions() ? value : value.replace(/@(everyone|here|&?\d+|!?\d+)/gi, '@​$1');
-  const embed = new EmbedBuilder().setColor(0x6bd6e8).setTitle(title).setDescription(safe(content)).setAuthor({ name: `${i.user.username} via PengBot <:PikaPeng:1551171560432345138> :` }).setTimestamp(); if (link) embed.setURL(link); if (footer) embed.setFooter({ text: footer });
+  const embed = new EmbedBuilder().setColor(0x6bd6e8).setTitle(title).setDescription(safe(content)).setAuthor({ name: `${i.user.username} via PengBot ${config.pengEmoji()}` }).setTimestamp(); if (link) embed.setURL(link); if (footer) embed.setFooter({ text: footer });
   return i.reply({ content: 'Private preview — publish when ready:', embeds: [embed], components: [new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('announcement_publish').setLabel('Publish').setStyle(ButtonStyle.Success), new ButtonBuilder().setCustomId('announcement_cancel').setLabel('Cancel').setStyle(ButtonStyle.Secondary))], ephemeral: true });
 }
 module.exports = { handleModal };
