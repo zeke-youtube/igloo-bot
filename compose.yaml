@@ -4,7 +4,6 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: igloobot
-    network_mode: host
     restart: unless-stopped
     env_file:
       - .env
