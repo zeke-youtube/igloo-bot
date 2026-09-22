@@ -1,7 +1,7 @@
 const path = require('node:path');
 const fs = require('node:fs');
 const { spawn } = require('node:child_process');
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnectionStatus, NoSubscriberBehavior, StreamType } = require('@discordjs/voice');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, VoiceConnectionStatus, NoSubscriberBehavior, StreamType, entersState } = require('@discordjs/voice');
 const config = require('./config');
 const logger = require('./utils/logger');
 
@@ -37,8 +37,10 @@ async function startRadio(client) {
   connection = joinVoiceChannel({ channelId: channel.id, guildId, adapterCreator: channel.guild.voiceAdapterCreator, selfDeaf: true, selfMute: false });
   connection.subscribe(player);
   logger.info(`Lofi radio voice connection state: ${connection.state.status}`);
+  connection.on('stateChange', (oldState, newState) => logger.info(`Lofi radio voice connection: ${oldState.status} -> ${newState.status}`));
   connection.on(VoiceConnectionStatus.Disconnected, () => { if (stopping) return; logger.info('Lofi radio disconnected; reconnecting.'); clearTimeout(reconnectTimer); reconnectTimer = setTimeout(() => startRadio(client), 5000); });
   connection.on(VoiceConnectionStatus.Destroyed, () => { if (!stopping) { clearTimeout(reconnectTimer); reconnectTimer = setTimeout(() => startRadio(client), 5000); } });
+  try { await entersState(connection, VoiceConnectionStatus.Ready, 20000); } catch (error) { logger.error('Lofi radio voice connection did not become Ready within 20 seconds.', error); return; }
   playLoop(); logger.info(`Lofi radio joined ${channel.name} and started looping.`);
 }
 function stopRadio() { stopping = true; clearTimeout(reconnectTimer); player?.stop(); ffmpegProcess?.kill('SIGTERM'); ffmpegProcess = null; connection?.destroy(); connection = null; }
