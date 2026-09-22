@@ -1,4 +1,4 @@
-# PengBot 🐧
+# PengBot — PikaPeng
 
 PengBot is the official-feeling PikaPeng companion for the PikaStudio Discord server, built with Node.js and discord.js v14.
 

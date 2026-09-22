@@ -19,7 +19,7 @@ module.exports = {
       { name: '🐟 Fish balance', value: `**${balance} Fish**`, inline: true },
       { name: '🔥 Current /waddle streak', value: `**${sections.currentWaddleStreak}**`, inline: true },
       { name: '🏆 Longest waddle streak', value: `**${sections.longestWaddleStreak}**`, inline: true },
-      { name: '🐧 Total waddles', value: `**${sections.totalWaddles}**`, inline: true },
+      { name: `${config.pengEmoji()} Total waddles`, value: `**${sections.totalWaddles}**`, inline: true },
       { name: '📅 Member since', value: member?.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:D>` : 'Unknown', inline: true },
       { name: '🎖️ Achievements', value: achievements, inline: false }
     ).setFooter({ text: 'PengBot · PikaStudio' });
