@@ -31,9 +31,12 @@ async function startRadio(client) {
   player ||= createAudioPlayer({ behaviors: { noSubscriber: NoSubscriberBehavior.Play } });
   player.removeAllListeners(AudioPlayerStatus.Idle);
   player.on(AudioPlayerStatus.Idle, playLoop);
+  player.on(AudioPlayerStatus.Playing, () => logger.info('Lofi radio audio player is playing.'));
+  player.on(AudioPlayerStatus.AutoPaused, () => logger.error('Lofi radio audio player auto-paused because it has no active subscriber.'));
   player.on('error', (error) => { logger.error('Lofi radio player error', error); setTimeout(playLoop, 1000); });
   connection = joinVoiceChannel({ channelId: channel.id, guildId, adapterCreator: channel.guild.voiceAdapterCreator, selfDeaf: true, selfMute: false });
   connection.subscribe(player);
+  logger.info(`Lofi radio voice connection state: ${connection.state.status}`);
   connection.on(VoiceConnectionStatus.Disconnected, () => { if (stopping) return; logger.info('Lofi radio disconnected; reconnecting.'); clearTimeout(reconnectTimer); reconnectTimer = setTimeout(() => startRadio(client), 5000); });
   connection.on(VoiceConnectionStatus.Destroyed, () => { if (!stopping) { clearTimeout(reconnectTimer); reconnectTimer = setTimeout(() => startRadio(client), 5000); } });
   playLoop(); logger.info(`Lofi radio joined ${channel.name} and started looping.`);
