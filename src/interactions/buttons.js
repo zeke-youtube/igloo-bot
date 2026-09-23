@@ -17,6 +17,7 @@ async function handleButton(i) {
   if (i.customId.startsWith('gamble_play:')) return gamble.play(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('gamble_cancel:')) return gamble.cancel(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('qotd_answer:')) return qotd.showAnswerModal(i);
+  if (i.customId.startsWith('qotd_test_answer:')) return qotd.showAnswerModal(i);
   if (i.customId.startsWith('ktv_pay:')) return rental.pay(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('ktv_cancel_rent:')) return rental.cancel(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('doorbell_')) return doorbell.handleButton(i, i.client);
