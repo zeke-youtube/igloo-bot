@@ -1,7 +1,4 @@
 #!/bin/sh
-
-cd "$HOME/igloo-bot" || exit 1
-
 while true; do
     echo "🐧 Checking GitHub..."
 
