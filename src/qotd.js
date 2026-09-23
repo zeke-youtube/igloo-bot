@@ -3,7 +3,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const economy = require('./economy');
 const logger = require('./utils/logger');
-const questions = require('./data/questions.json');
+const questions = require('./questions.json');
 const storePath = path.join(__dirname, 'data', 'qotd-state.json');
 let state = {}; let loaded = false; const locks = new Map();
 async function load() { if (loaded) return; try { state = JSON.parse(await fs.readFile(storePath, 'utf8')); } catch { state = {}; } loaded = true; }

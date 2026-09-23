@@ -1,7 +1,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const out = path.join(__dirname, '..', 'src', 'data', 'questions.json');
-const existing = JSON.parse(fs.readFileSync(out, 'utf8'));
+const out = path.join(__dirname, '..', 'src', 'questions.json');
+const source = fs.existsSync(out) ? out : path.join(__dirname, '..', 'src', 'data', 'questions.json');
+const existing = JSON.parse(fs.readFileSync(source, 'utf8'));
 const questions = []; const ids = new Set(); for (const question of existing) if (!ids.has(question.id)) { ids.add(question.id); question.answers = [...new Set(question.answers.map((answer) => String(answer).normalize('NFKC').trim().toLowerCase().replace(/\s+/g, ' ')))]; questions.push(question); }
 const add = (category, id, question, answers) => { if (!ids.has(id)) { ids.add(id); questions.push({ id, question, answers: answers.map(String), reward: 100, category }); } };
 for (let a = 1; a <= 100; a++) add('Mathematics', `addition-${a}`, `What is ${a} + ${a}?`, [a + a]);

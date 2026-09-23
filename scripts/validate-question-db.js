@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const questions = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'data', 'questions.json'), 'utf8'));
+const questions = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'questions.json'), 'utf8'));
 const normalize = (v) => String(v).normalize('NFKC').trim().toLocaleLowerCase('en-US').replace(/\s+/g, ' ');
 const errors = []; const warnings = []; const ids = new Set(); const texts = new Map(); const categories = {};
 if (questions.length < 1000) errors.push(`Only ${questions.length} questions; at least 1000 required.`);
