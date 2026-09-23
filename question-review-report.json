@@ -1,0 +1,15 @@
+{
+  "total": 1010,
+  "categories": {
+    "Uncategorized": 10,
+    "Mathematics": 300,
+    "Geometry": 200,
+    "Computer Science": 200,
+    "Programming": 100,
+    "Language": 100,
+    "Science": 100
+  },
+  "errors": [],
+  "warnings": [],
+  "reviewRequired": true
+}

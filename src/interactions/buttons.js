@@ -8,6 +8,7 @@ const fish = require('../commands/fish');
 const rental = require('../ktv-rental');
 const givefish = require('../commands/givefish');
 const gamble = require('../commands/gamble');
+const qotd = require('../commands/qotd');
 
 async function handleButton(i) {
   if (i.customId.startsWith('fish_')) return fish.handleButton(i);
@@ -15,6 +16,7 @@ async function handleButton(i) {
   if (i.customId.startsWith('givefish_cancel:')) return givefish.cancel(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('gamble_play:')) return gamble.play(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('gamble_cancel:')) return gamble.cancel(i, i.customId.split(':')[1]);
+  if (i.customId.startsWith('qotd_answer:')) return qotd.showAnswerModal(i);
   if (i.customId.startsWith('ktv_pay:')) return rental.pay(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('ktv_cancel_rent:')) return rental.cancel(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('doorbell_')) return doorbell.handleButton(i, i.client);
