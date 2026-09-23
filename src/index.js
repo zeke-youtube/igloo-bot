@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, Collection, PermissionFlagsBits } = require('discord.js');
 const config = require('./config'); const logger = require('./utils/logger'); const counting = require('./counting');
 config.validateEnv();
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates] }); client.commands = new Collection();
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] }); client.commands = new Collection();
 for (const file of ['about', 'help', 'pengfact', 'pikastudiosites', 'announcements', 'coinflip', 'clear', 'global-cooldown', 'createroom', 'doorbell', 'ktvmanage', 'fish', 'balance', 'givefish', 'gamble', 'profile', 'waddle', 'counting']) { const command = require(`./commands/${file}`); client.commands.set(command.data.name, command); }
 const { handleButton } = require('./interactions/buttons'); const { handleModal } = require('./interactions/modals'); const { syncGuildCommands, cleanCommandsOnlyChannel } = require('./command-sync');
 const { handleSelect } = require('./interactions/selects');
