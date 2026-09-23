@@ -13,6 +13,7 @@ while true; do
         git reset --hard origin/main
 
         echo "❄️ Running update.sh..."
+        chmod +x ./update.sh
         ./update.sh
     else
         echo "✅ Already up to date."
