@@ -1,8 +1,8 @@
 const { Client, GatewayIntentBits, Collection, PermissionFlagsBits } = require('discord.js');
-const config = require('./config'); const logger = require('./utils/logger');
+const config = require('./config'); const logger = require('./utils/logger'); const counting = require('./counting');
 config.validateEnv();
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildVoiceStates] }); client.commands = new Collection();
-for (const file of ['about', 'help', 'pengfact', 'pikastudiosites', 'announcements', 'coinflip', 'clear', 'global-cooldown', 'createroom', 'doorbell', 'ktvmanage', 'fish', 'balance', 'givefish', 'gamble', 'profile', 'waddle']) { const command = require(`./commands/${file}`); client.commands.set(command.data.name, command); }
+for (const file of ['about', 'help', 'pengfact', 'pikastudiosites', 'announcements', 'coinflip', 'clear', 'global-cooldown', 'createroom', 'doorbell', 'ktvmanage', 'fish', 'balance', 'givefish', 'gamble', 'profile', 'waddle', 'counting']) { const command = require(`./commands/${file}`); client.commands.set(command.data.name, command); }
 const { handleButton } = require('./interactions/buttons'); const { handleModal } = require('./interactions/modals'); const { syncGuildCommands, cleanCommandsOnlyChannel } = require('./command-sync');
 const { handleSelect } = require('./interactions/selects');
 const { handleVoiceStateUpdate, removeMemberAccess, cleanupStartup, cleanupShutdown } = require('./ktv-manager'); const doorbell = require('./doorbell-manager');
@@ -12,6 +12,7 @@ let shuttingDown = false;
 async function shutdown(signal) { if (shuttingDown) return; shuttingDown = true; logger.info(`${signal} received; cleaning temporary KTV rooms.`); await cleanupShutdown(client).catch((error) => logger.error('KTV shutdown cleanup failed', error)); client.destroy(); process.exit(0); }
 process.once('SIGINT', () => shutdown('SIGINT')); process.once('SIGTERM', () => shutdown('SIGTERM'));
 client.on('messageCreate', async (message) => {
+  await counting.processMessage(message).catch((error) => logger.error('Counting message processing failed', error));
   if (message.channel.id !== config.commandsOnlyChannelId() || message.author.id === client.user.id) return;
   try {
     // Keep this channel limited to slash-command interactions handled by integrations.
