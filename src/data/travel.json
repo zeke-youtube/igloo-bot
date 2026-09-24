@@ -1,0 +1,135 @@
+{
+  "destinations": [
+    {
+      "id": "8398b6a384002fa9",
+      "name": "DDevs",
+      "guildId": "613425648685547541",
+      "invite": "https://discord.gg/discord-developers",
+      "description": "Official Discord developer community.",
+      "stamp": "DDevs",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "53943be8a06841fd",
+      "name": "Joins.ltd",
+      "guildId": "1536059289590964285",
+      "invite": "https://discord.gg/Nbg9bSSu2Z",
+      "description": "The Discord Growth Network.",
+      "stamp": "J.ltd",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "a4c91f3e8b7d2a10",
+      "name": "STARART",
+      "guildId": "1324382318311374919",
+      "invite": "https://discord.gg/MYASyjtFGa",
+      "description": "Art and commissions community.",
+      "stamp": "Starart Traveler",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "7e2b91c4d6a8f305",
+      "name": "The Ghostly Hideaway",
+      "guildId": "1142085464313040958",
+      "invite": "https://discord.gg/zE4ug6zDbB",
+      "description": "Artist community with contests and art trades.",
+      "stamp": "Ghostly Artist",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "c8f04a72b1936de5",
+      "name": "Artcade",
+      "guildId": "1010353503937511454",
+      "invite": "https://discord.gg/VRR8MmZh92",
+      "description": "Community for artists and creative feedback.",
+      "stamp": "Artcade Creator",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "1d7a93e5b40c68f2",
+      "name": "Haru Makes ART",
+      "guildId": "1312266221214765106",
+      "invite": "https://discord.gg/4pkNnga4m4",
+      "description": "Art, music, fandom, and commissions community.",
+      "stamp": "Haru Artist",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "f0a62c9d4e1837b5",
+      "name": "Razzmatazz",
+      "guildId": "1437483484808482890",
+      "invite": "https://discord.gg/FBWQCapweW",
+      "description": "Friendly, fun, and chill SFW community.",
+      "stamp": "Razzmatazz Visitor",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "b6e13f8a20c947d1",
+      "name": "Rec Area",
+      "guildId": "1373111298996568245",
+      "invite": "https://discord.gg/fg7CUxGnaS",
+      "description": "Community link hub with games and hangouts.",
+      "stamp": "Rec Area Traveler",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "e29b4c71a5d803f6",
+      "name": "layer",
+      "guildId": "1465116082053582961",
+      "invite": "https://discord.gg/layer",
+      "description": "Chill community for gaming and anime.",
+      "stamp": "Layer Traveler",
+      "region": "Europe",
+      "enabled": true
+    },
+    {
+      "id": "4f8d1a63c0e927b5",
+      "name": "Meridian",
+      "guildId": "1229203509971386408",
+      "invite": "https://discord.gg/meridian",
+      "description": "Minecraft community with custom features and events.",
+      "stamp": "Meridian Explorer",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "9c25e7b104a8d3f6",
+      "name": "Cassiopeia Systems",
+      "guildId": "1271974811307999232",
+      "invite": "https://discord.gg/mhFhUu2xjq",
+      "description": "Roblox horror experience and creative community.",
+      "stamp": "Cassiopeia Survivor",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "d3a90f6c2b174e85",
+      "name": "CootMC",
+      "guildId": "1112332484848406660",
+      "invite": "https://discord.gg/qu4UWjUFpU",
+      "description": "Minecraft towny survival community.",
+      "stamp": "CootMC Builder",
+      "region": "Worldwide",
+      "enabled": true
+    },
+    {
+      "id": "6b1e4d8f93c207a5",
+      "name": "MODERNA",
+      "guildId": "1095313123960963132",
+      "invite": "https://discord.gg/bsQ7HZjK4k",
+      "description": "French art, gaming, and community server.",
+      "stamp": "Moderna Visitor",
+      "region": "France",
+      "enabled": true
+    }
+  ],
+  "passports": {}
+}
