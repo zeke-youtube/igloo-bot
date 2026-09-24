@@ -10,6 +10,7 @@ const givefish = require('../commands/givefish');
 const gamble = require('../commands/gamble');
 const qotd = require('../commands/qotd');
 const adManager = require('../ad-manager');
+const boop = require('../boop');
 
 async function handleButton(i) {
   if (i.customId.startsWith('fish_')) return fish.handleButton(i);
@@ -21,6 +22,7 @@ async function handleButton(i) {
   if (i.customId.startsWith('qotd_test_answer:')) return qotd.showAnswerModal(i);
   if (i.customId.startsWith('ad_approve:')) return adManager.process(i, i.customId.split(':')[1], true);
   if (i.customId.startsWith('ad_reject:')) return adManager.process(i, i.customId.split(':')[1], false);
+  if (i.customId.startsWith('boop_back:')) return boop.boopBack(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('ktv_pay:')) return rental.pay(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('ktv_cancel_rent:')) return rental.cancel(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('doorbell_')) return doorbell.handleButton(i, i.client);
