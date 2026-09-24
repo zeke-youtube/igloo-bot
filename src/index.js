@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits, Collection, PermissionFlagsBits } = require('
 const config = require('./config'); const logger = require('./utils/logger'); const counting = require('./counting'); const qotd = require('./qotd');
 config.validateEnv();
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] }); client.commands = new Collection();
-for (const file of ['about', 'help', 'pengfact', 'pikastudiosites', 'announcements', 'coinflip', 'clear', 'global-cooldown', 'createroom', 'doorbell', 'ktvmanage', 'fish', 'balance', 'givefish', 'gamble', 'profile', 'waddle', 'counting', 'qotd']) { const command = require(`./commands/${file}`); client.commands.set(command.data.name, command); }
+for (const file of ['about', 'help', 'pengfact', 'pikastudiosites', 'announcements', 'coinflip', 'clear', 'global-cooldown', 'createroom', 'doorbell', 'ktvmanage', 'fish', 'balance', 'givefish', 'gamble', 'profile', 'waddle', 'counting', 'qotd', 'publishad']) { const command = require(`./commands/${file}`); client.commands.set(command.data.name, command); }
 const { handleButton } = require('./interactions/buttons'); const { handleModal } = require('./interactions/modals'); const { syncGuildCommands, cleanCommandsOnlyChannel } = require('./command-sync');
 const { handleSelect } = require('./interactions/selects');
 const { handleVoiceStateUpdate, removeMemberAccess, cleanupStartup, cleanupShutdown } = require('./ktv-manager'); const doorbell = require('./doorbell-manager');
