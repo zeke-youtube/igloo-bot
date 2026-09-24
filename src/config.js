@@ -21,6 +21,7 @@ module.exports = {
   ktvCategoryId: () => process.env.KTV_CATEGORY_ID,
   ktvRentalPrice: () => Number.isInteger(Number(process.env.KTV_RENTAL_PRICE)) && Number(process.env.KTV_RENTAL_PRICE) >= 0 ? Number(process.env.KTV_RENTAL_PRICE) : 5,
   pengEmoji: () => process.env.PIKAPENG_EMOJI_ID && /^\d{17,20}$/.test(process.env.PIKAPENG_EMOJI_ID) ? `<:pikapeng:${process.env.PIKAPENG_EMOJI_ID}>` : '<:PikaPeng:1551565899331538975>',
+  pengEmojiId: () => process.env.PIKAPENG_EMOJI_ID && /^\d{17,20}$/.test(process.env.PIKAPENG_EMOJI_ID) ? process.env.PIKAPENG_EMOJI_ID : '1551565899331538975',
   staffRoleIds: () => csv(process.env.STAFF_ROLE_IDS || process.env.STAFF_ROLE_ID),
   allowAnnouncementMentions: () => process.env.ALLOW_ANNOUNCEMENT_MENTIONS === 'true'
 };
