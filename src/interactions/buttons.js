@@ -12,9 +12,12 @@ const qotd = require('../commands/qotd');
 const adManager = require('../ad-manager');
 const boop = require('../boop');
 const inbox = require('./inbox');
+const travel = require('../commands/travel');
 
 async function handleButton(i) {
   if (i.customId.startsWith('inbox_')) return inbox.handleButton(i);
+  if (i.customId.startsWith('travel_confirm:')) return travel.confirm(i, i.customId.split(':')[1]);
+  if (i.customId.startsWith('travel_cancel:')) return travel.cancel(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('fish_')) return fish.handleButton(i);
   if (i.customId.startsWith('givefish_confirm:')) return givefish.confirm(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('givefish_cancel:')) return givefish.cancel(i, i.customId.split(':')[1]);
