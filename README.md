@@ -43,3 +43,27 @@ The Compose volume `igloobot_data` persists Fish balances and KTV tracking data 
 - `/createroom` creates one temporary voice KTV per user inside the configured PikaPeng KTV category.
 
 Announcement mentions are escaped by default. Set `ALLOW_ANNOUNCEMENT_MENTIONS=true` only when intentional. Never place bot tokens in source control.
+
+## Discord OAuth through Cloudflare Tunnel
+
+Create a Cloudflare Tunnel in Zero Trust, add a Public Hostname such as `bot.example.com`, and route it to:
+
+```text
+http://host.docker.internal:3000
+```
+
+Copy the tunnel token into `.env` and set the exact callback URL in both Discord Developer Portal → OAuth2 → Redirects and `.env`:
+
+```env
+OAUTH_CLIENT_SECRET=your_application_client_secret
+OAUTH_REDIRECT_URI=https://bot.example.com/oauth/discord/callback
+TUNNEL_TOKEN=your_cloudflare_tunnel_token
+```
+
+Start the bot and tunnel with:
+
+```bash
+docker compose --profile tunnel up -d --build
+```
+
+The callback service listens internally on port 3000; Cloudflare Tunnel provides HTTPS externally. Do not commit `.env` or the tunnel token.
