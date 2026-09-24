@@ -2,4 +2,4 @@
 set -e
 
 git pull
-docker-compose up -d --build
+docker-compose --profile tunnel up -d --build
