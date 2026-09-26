@@ -4,6 +4,7 @@ const crypto = require('node:crypto');
 const economy = require('./economy');
 const config = require('./config');
 const logger = require('./utils/logger');
+const { discordTimestamp } = require('./utils/time');
 
 const storePath = path.join(__dirname, 'data', 'fish-thefts.json');
 const STEAL_FISH_AMOUNT = config.stealFishAmount();
@@ -34,11 +35,12 @@ async function resolve(id, outcome, client) {
 function schedule(id, client) { const r = records[id]; if (!r || r.status !== 'active') return; const delay = Math.max(0, r.deadlineAt - Date.now()); timers.set(id, setTimeout(() => resolve(id, 'escaped', client).catch((e) => logger.error('Fish theft timeout failed', e)), delay)); }
 async function start(client, thief, victim) {
   return mutate(async () => { await load(); if (activeFor(thief.id, 'thiefId')) throw new Error('You already have an active fish theft.'); if (activeFor(victim.id, 'victimId')) throw new Error('That user is already being targeted by an active fish theft.'); if ((await economy.getFishBalance(victim.id)) < STEAL_FISH_AMOUNT) throw new Error('That user needs at least 10 fish to be targeted.');
-    const id = crypto.randomUUID(); const deadlineAt = Date.now() + STEAL_DURATION_MS; const content = `🚨 FISH THEFT IN PROGRESS!\n\n<@${thief.id}> is trying to steal 10 🐟 from you!\n\nYou have ONE HOUR to catch them.\n\nIf you catch them, PolicePeng will confiscate 50% of their CURRENT fish balance and give it to you.\n\nDeadline: <t:${Math.ceil(deadlineAt / 1000)}:R>`;
+    const id = crypto.randomUUID(); const deadlineAt = Date.now() + STEAL_DURATION_MS; const content = `🚨 FISH THEFT IN PROGRESS!\n\n<@${thief.id}> is trying to steal 10 🐟 from you!\n\nYou have ONE HOUR to catch them.\n\nIf you catch them, PolicePeng will confiscate 50% of their CURRENT fish balance and give it to you.\n\nDeadline: ${discordTimestamp(deadlineAt)}`;
     let dm; try { dm = await victim.send({ content, components: button(id, `CATCH ${thief.username}`) }); } catch { logger.info(`[STEAL_CANCELLED_DM_FAILURE] theft=${id} thief=${thief.id} victim=${victim.id} timestamp=${new Date().toISOString()}`); throw new Error('I couldn’t deliver the warning to that user’s DMs. No fish were moved.'); }
     records[id] = { id, thiefId: thief.id, victimId: victim.id, startedAt: Date.now(), deadlineAt, status: 'active', dmChannelId: dm.channelId, dmMessageId: dm.id }; await save(); schedule(id, client); logger.info(`[STEAL_STARTED] theft=${id} thief=${thief.id} victim=${victim.id} timestamp=${new Date().toISOString()}`); return records[id];
   });
 }
 async function catchTheft(interaction, id) { await load(); const r = records[id]; if (!r || r.status !== 'active') return interaction.reply({ content: '🐧 This fish theft is already over.', ephemeral: true }); if (interaction.user.id !== r.victimId) return interaction.reply({ content: '🐧 Only the targeted victim can catch this thief.', ephemeral: true }); const result = await resolve(id, 'caught', interaction.client); if (result.record.status === 'escaped') return interaction.reply({ content: '🐧 The deadline passed — this theft escaped.', ephemeral: true }); await interaction.update({ content: `🚨 THIEF CAUGHT!\n\nYou caught <@${r.thiefId}>!\n\n🐟 Confiscated: ${result.result.amount} fish\n💰 Your new balance: ${result.result.victimBalance} fish`, components: disabledButton(id, 'THEFT OVER') }); }
-async function restore(client) { await mutate(async () => { await load(); for (const r of Object.values(records)) if (r.status === 'active') { if (Date.now() >= r.deadlineAt) await resolve(r.id, 'escaped', client); else schedule(r.id, client); } }); }
-module.exports = { start, catchTheft, restore, STEAL_FISH_AMOUNT, STEAL_DURATION_MS, POLICEPENG_CONFISCATION_RATE };
+async function restore(client) { await load(); for (const r of Object.values(records)) if (r.status === 'active') { if (Date.now() >= r.deadlineAt) await resolve(r.id, 'escaped', client); else schedule(r.id, client); } }
+async function hasActiveTheftAsThief(userId) { await load(); return Object.values(records).some((r) => r.status === 'active' && r.thiefId === userId); }
+module.exports = { start, catchTheft, restore, hasActiveTheftAsThief, STEAL_FISH_AMOUNT, STEAL_DURATION_MS, POLICEPENG_CONFISCATION_RATE };

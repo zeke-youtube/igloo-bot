@@ -28,4 +28,8 @@ module.exports = {
   ,stealFishAmount: () => 10
   ,stealFishDurationMs: () => Number.isInteger(Number(process.env.STEAL_DURATION_MS)) && Number(process.env.STEAL_DURATION_MS) > 0 ? Number(process.env.STEAL_DURATION_MS) : 60 * 60 * 1000
   ,policePengConfiscationRate: () => 0.50
+  ,bankDurationMs: () => Number.isInteger(Number(process.env.BANK_DURATION_MS)) && Number(process.env.BANK_DURATION_MS) > 0 ? Number(process.env.BANK_DURATION_MS) : 10 * 60 * 1000
+  ,bankInterestRate: () => 0.01
+  ,bankCompoundPeriods: () => 10
+  ,bankMaxDeposit: () => Number.isSafeInteger(Number(process.env.BANK_MAX_DEPOSIT)) && Number(process.env.BANK_MAX_DEPOSIT) > 0 ? Number(process.env.BANK_MAX_DEPOSIT) : Number.MAX_SAFE_INTEGER
 };
