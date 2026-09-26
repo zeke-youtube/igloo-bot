@@ -33,4 +33,8 @@ module.exports = {
   ,bankCompoundPeriods: () => 10
   ,bankMaxDeposit: () => Number.isSafeInteger(Number(process.env.BANK_MAX_DEPOSIT)) && Number(process.env.BANK_MAX_DEPOSIT) > 0 ? Number(process.env.BANK_MAX_DEPOSIT) : Number.MAX_SAFE_INTEGER
   ,ramMarket: () => ({ ddr5_8gb_price_ntd: 4399, salmon_100g_price_ntd: 200, updated_at: '2026-09-26' })
+  ,shopCreateCost: () => 500
+  ,shopMaxProductPrice: () => 1000000
+  ,shopMaxProducts: () => 50
+  ,shopMaxQuantity: () => 100
 };
