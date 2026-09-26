@@ -12,8 +12,10 @@ const qotd = require('../commands/qotd');
 const adManager = require('../ad-manager');
 const boop = require('../boop');
 const inbox = require('./inbox');
+const fishDrop = require('../fish-drop');
 
 async function handleButton(i) {
+  if (i.customId.startsWith('fishdrop:')) return fishDrop.claim(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('inbox_')) return inbox.handleButton(i);
   if (i.customId.startsWith('fish_')) return fish.handleButton(i);
   if (i.customId.startsWith('givefish_confirm:')) return givefish.confirm(i, i.customId.split(':')[1]);

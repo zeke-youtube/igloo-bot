@@ -18,6 +18,7 @@ module.exports = {
   announcementsChannelId: () => process.env.ANNOUNCEMENTS_CHANNEL_ID,
   commandsOnlyChannelId: () => process.env.COMMANDS_ONLY_CHANNEL_ID || null,
   typingChannelId: () => process.env.TYPING_CHANNEL_ID || null,
+  fishDropChannelId: () => process.env.FISH_DROP_CHANNEL_ID || null,
   ktvCategoryId: () => process.env.KTV_CATEGORY_ID,
   ktvRentalPrice: () => Number.isInteger(Number(process.env.KTV_RENTAL_PRICE)) && Number(process.env.KTV_RENTAL_PRICE) >= 0 ? Number(process.env.KTV_RENTAL_PRICE) : 5,
   pengEmoji: () => process.env.PIKAPENG_EMOJI_ID && /^\d{17,20}$/.test(process.env.PIKAPENG_EMOJI_ID) ? `<:pikapeng:${process.env.PIKAPENG_EMOJI_ID}>` : '<:PikaPeng:1551565899331538975>',
