@@ -38,4 +38,5 @@ module.exports = {
   ,shopMaxProducts: () => 50
   ,shopMaxQuantity: () => 100
   ,rent: () => ({ enabled: true, priceFish: 500, durationDays: 30, gracePeriodHours: 24, maxTextChannels: 10, maxVoiceChannels: 5, maxTotalChannels: 15, maxChannelNameLength: 50, maxCategoryNameLength: 50 })
+  ,chairHistoryLimit: () => 100
 };
