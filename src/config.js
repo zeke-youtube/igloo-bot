@@ -25,4 +25,7 @@ module.exports = {
   pengEmojiId: () => process.env.PIKAPENG_EMOJI_ID && /^\d{17,20}$/.test(process.env.PIKAPENG_EMOJI_ID) ? process.env.PIKAPENG_EMOJI_ID : '1551565899331538975',
   staffRoleIds: () => csv(process.env.STAFF_ROLE_IDS || process.env.STAFF_ROLE_ID),
   allowAnnouncementMentions: () => process.env.ALLOW_ANNOUNCEMENT_MENTIONS === 'true'
+  ,stealFishAmount: () => 10
+  ,stealFishDurationMs: () => Number.isInteger(Number(process.env.STEAL_DURATION_MS)) && Number(process.env.STEAL_DURATION_MS) > 0 ? Number(process.env.STEAL_DURATION_MS) : 60 * 60 * 1000
+  ,policePengConfiscationRate: () => 0.50
 };

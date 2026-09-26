@@ -1,0 +1,4 @@
+const { SlashCommandBuilder } = require('discord.js');
+const config = require('../config');
+const theft = require('../fish-theft');
+module.exports = { data: new SlashCommandBuilder().setName('stealfish').setDescription('Start a one-hour Fish Theft challenge.').addUserOption((o) => o.setName('user').setDescription('The user to challenge').setRequired(true)), async execute(i) { const victim = i.options.getUser('user'); if (i.user.bot || !victim || victim.bot || victim.id === i.user.id || victim.id === i.client.user.id) return i.reply({ content: `${config.pengEmoji()} Choose another real user — you cannot steal from yourself or a bot.`, ephemeral: true }); try { await theft.start(i.client, i.user, victim); return i.reply({ content: `${config.pengEmoji()} Fish Theft started! <@${victim.id}> has one hour to catch you.` }); } catch (e) { return i.reply({ content: `${config.pengEmoji()} Theft cancelled. ${e.message}`, ephemeral: true }); } } };
