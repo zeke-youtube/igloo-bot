@@ -2,10 +2,11 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const economy = require('../economy');
 const config = require('../config');
 const { getWaddleStats } = require('../waddle');
+const { getWorkStats } = require('../work');
 
 // Waddle and achievement persistence do not exist in the current project yet.
 // Keep this provider isolated so those existing services can be connected later without changing the command UI.
-async function getProfileSections(userId) { const waddle = await getWaddleStats(userId); return { currentWaddleStreak: waddle.currentStreak, longestWaddleStreak: waddle.longestStreak, totalWaddles: waddle.totalWaddles, achievements: [] }; }
+async function getProfileSections(userId) { const waddle = await getWaddleStats(userId); const work = await getWorkStats(userId); return { currentWaddleStreak: waddle.currentStreak, longestWaddleStreak: waddle.longestStreak, totalWaddles: waddle.totalWaddles, totalWorkShifts: work.totalWorkShifts, achievements: [] }; }
 
 module.exports = {
   data: new SlashCommandBuilder().setName('profile').setDescription('View a PikaPeng profile.').addUserOption((option) => option.setName('user').setDescription('The member whose profile you want to view').setRequired(false)),
@@ -20,6 +21,7 @@ module.exports = {
       { name: '🔥 Current /waddle streak', value: `**${sections.currentWaddleStreak}**`, inline: true },
       { name: '🏆 Longest waddle streak', value: `**${sections.longestWaddleStreak}**`, inline: true },
       { name: `${config.pengEmoji()} Total waddles`, value: `**${sections.totalWaddles}**`, inline: true },
+      { name: '🛠️ Total work shifts', value: `**${sections.totalWorkShifts}**`, inline: true },
       { name: '📅 Member since', value: member?.joinedAt ? `<t:${Math.floor(member.joinedAt.getTime() / 1000)}:D>` : 'Unknown', inline: true },
     ).setFooter({ text: 'PengBot · PikaStudio' });
     return interaction.reply({ embeds: [embed] });

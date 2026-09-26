@@ -9,19 +9,6 @@ services:
       - .env
     volumes:
       - igloobot_data:/app/src/data
-    ports:
-      - "3000:3000"
-
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    container_name: igloobot-cloudflared
-    restart: unless-stopped
-    profiles: ["tunnel"]
-    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      - igloobot
 
 volumes:
   igloobot_data:
