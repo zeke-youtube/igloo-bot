@@ -57,7 +57,50 @@ test('existing users without work fields receive safe defaults', async () => {
 
 test('fish drop uses the requested production defaults', () => {
   assert.equal(fishDrop.FISH_DROP_INTERVAL_MS, 10 * 60 * 1000);
+  assert.equal(fishDrop.FISH_DROP_ACTIVITY_WINDOW_MS, 60 * 60 * 1000);
   assert.equal(fishDrop.FISH_DROP_REWARD, 10);
+});
+
+test('fish drop activity only records human guild messages for 60 minutes', async () => {
+  await fishDrop.stop();
+  const now = 10_000;
+  assert.equal(fishDrop.recordActivity({ guildId: null, author: { bot: false } }, now), false);
+  assert.equal(fishDrop.recordActivity({ guildId: 'guild', author: { bot: true } }, now), false);
+  assert.equal(fishDrop.hasRecentActivity('guild', now), false);
+
+  assert.equal(fishDrop.recordActivity({ guildId: 'guild', author: { bot: false } }, now), true);
+  assert.equal(fishDrop.hasRecentActivity('guild', now + fishDrop.FISH_DROP_ACTIVITY_WINDOW_MS), true);
+  assert.equal(fishDrop.hasRecentActivity('guild', now + fishDrop.FISH_DROP_ACTIVITY_WINDOW_MS + 1), false);
+  await fishDrop.stop();
+});
+
+test('an inactive scheduled fish drop is skipped without expiring the active drop', async () => {
+  await fishDrop.stop();
+  const originalChannelId = process.env.FISH_DROP_CHANNEL_ID;
+  process.env.FISH_DROP_CHANNEL_ID = 'fish-drop-channel';
+  const sent = [];
+  let edits = 0;
+  const channel = {
+    guildId: 'guild',
+    isTextBased: () => true,
+    send: async (body) => {
+      sent.push(body);
+      return { editable: true, edit: async () => { edits += 1; } };
+    },
+  };
+  const client = { channels: { fetch: async () => channel } };
+  const now = 20_000;
+
+  fishDrop.recordActivity({ guildId: 'guild', author: { bot: false } }, now);
+  assert.ok(await fishDrop.postDrop(client, now));
+  assert.equal(sent.length, 1);
+
+  assert.equal(await fishDrop.postDrop(client, now + fishDrop.FISH_DROP_ACTIVITY_WINDOW_MS + 1), null);
+  assert.equal(sent.length, 1);
+  assert.equal(edits, 0);
+  await fishDrop.stop();
+  if (originalChannelId === undefined) delete process.env.FISH_DROP_CHANNEL_ID;
+  else process.env.FISH_DROP_CHANNEL_ID = originalChannelId;
 });
 
 test('fish drop scheduler starts once and tolerates a missing channel', async () => {

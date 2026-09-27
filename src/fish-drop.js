@@ -5,11 +5,25 @@ const config = require('./config');
 const logger = require('./utils/logger');
 
 const FISH_DROP_INTERVAL_MS = Number.isFinite(Number(process.env.FISH_DROP_INTERVAL_MS)) && Number(process.env.FISH_DROP_INTERVAL_MS) > 0 ? Number(process.env.FISH_DROP_INTERVAL_MS) : 10 * 60 * 1000;
+const FISH_DROP_ACTIVITY_WINDOW_MS = 60 * 60 * 1000;
 const FISH_DROP_REWARD = 10;
 let schedulerStarted = false;
 let timer = null;
 let activeDrop = null;
 const claimLocks = new Map();
+const lastHumanActivityByGuild = new Map();
+
+function recordActivity(message, now = Date.now()) {
+  const guildId = message?.guildId || message?.guild?.id;
+  if (!guildId || message?.author?.bot !== false) return false;
+  lastHumanActivityByGuild.set(guildId, now);
+  return true;
+}
+
+function hasRecentActivity(guildId, now = Date.now()) {
+  const lastActivity = lastHumanActivityByGuild.get(guildId);
+  return lastActivity !== undefined && now - lastActivity <= FISH_DROP_ACTIVITY_WINDOW_MS;
+}
 
 function withClaimLock(id, task) {
   const previous = claimLocks.get(id) || Promise.resolve();
@@ -38,11 +52,15 @@ async function expireActiveDrop() {
   await disableDrop(activeDrop, `${config.pengEmoji()} Fish Drop expired. A fresh drop is on the way.`);
 }
 
-async function postDrop(client) {
-  await expireActiveDrop();
+async function postDrop(client, now = Date.now()) {
   const channelId = config.fishDropChannelId();
   const channel = channelId ? await client.channels.fetch(channelId).catch((error) => { logger.error(`Fish Drop channel fetch failed for ${channelId}`, error); return null; }) : null;
   if (!channel?.isTextBased() || typeof channel.send !== 'function') { logger.error(`Fish Drop skipped: configured channel ${channelId || '(missing)'} is unavailable or not text-capable.`); return null; }
+  if (!hasRecentActivity(channel.guildId || channel.guild?.id, now)) {
+    logger.info('Fish Drop skipped: no human server activity in the last 60 minutes');
+    return null;
+  }
+  await expireActiveDrop();
   const token = crypto.randomBytes(12).toString('hex');
   try {
     const message = await channel.send(payload(token));
@@ -80,7 +98,7 @@ async function start(client) {
   return true;
 }
 
-async function stop() { if (timer) clearInterval(timer); timer = null; schedulerStarted = false; activeDrop = null; }
+async function stop() { if (timer) clearInterval(timer); timer = null; schedulerStarted = false; activeDrop = null; lastHumanActivityByGuild.clear(); }
 function isStarted() { return schedulerStarted; }
 
-module.exports = { start, stop, claim, postDrop, expireActiveDrop, isStarted, FISH_DROP_INTERVAL_MS, FISH_DROP_REWARD };
+module.exports = { start, stop, claim, postDrop, expireActiveDrop, recordActivity, hasRecentActivity, isStarted, FISH_DROP_INTERVAL_MS, FISH_DROP_ACTIVITY_WINDOW_MS, FISH_DROP_REWARD };
