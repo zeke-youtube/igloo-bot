@@ -14,6 +14,7 @@ client.once('clientReady', scheduleQotd);
 async function shutdown(signal) { if (shuttingDown) return; shuttingDown = true; logger.info(`${signal} received; cleaning temporary KTV rooms.`); await fishDrop.stop(); await cleanupShutdown(client).catch((error) => logger.error('KTV shutdown cleanup failed', error)); client.destroy(); process.exit(0); }
 process.once('SIGINT', () => shutdown('SIGINT')); process.once('SIGTERM', () => shutdown('SIGTERM'));
 client.on('messageCreate', async (message) => {
+  fishDrop.recordActivity(message);
   await counting.processMessage(message).catch((error) => logger.error('Counting message processing failed', error));
   if (message.channel.id !== config.commandsOnlyChannelId() || message.author.id === client.user.id) return;
   try {
