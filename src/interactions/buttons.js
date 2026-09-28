@@ -14,8 +14,11 @@ const boop = require('../boop');
 const inbox = require('./inbox');
 const fishDrop = require('../fish-drop');
 const fishTheft = require('../fish-theft');
+const irs = require('../pikaPeng-irs');
 
 async function handleButton(i) {
+  if (i.customId.startsWith('irs_pay:')) return irs.handleButton(i, 'pay', i.customId.slice('irs_pay:'.length));
+  if (i.customId.startsWith('irs_refuse:')) return irs.handleButton(i, 'refuse', i.customId.slice('irs_refuse:'.length));
   if (i.customId.startsWith('stealfish_catch:')) return fishTheft.catchTheft(i, i.customId.slice('stealfish_catch:'.length));
   if (i.customId.startsWith('fishdrop:')) return fishDrop.claim(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('inbox_')) return inbox.handleButton(i);

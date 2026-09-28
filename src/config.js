@@ -27,6 +27,8 @@ module.exports = {
   waddleRaceMaxIntervalMs: () => Number.isFinite(Number(process.env.WADDLE_RACE_MAX_INTERVAL_MS)) && Number(process.env.WADDLE_RACE_MAX_INTERVAL_MS) >= 1000 ? Number(process.env.WADDLE_RACE_MAX_INTERVAL_MS) : 20 * 60 * 1000,
   waddleRaceReward: () => Number.isSafeInteger(Number(process.env.WADDLE_RACE_REWARD)) && Number(process.env.WADDLE_RACE_REWARD) > 0 ? Number(process.env.WADDLE_RACE_REWARD) : 25,
   waddleRaceMaxAnswerLength: () => Number.isSafeInteger(Number(process.env.WADDLE_RACE_MAX_ANSWER_LENGTH)) && Number(process.env.WADDLE_RACE_MAX_ANSWER_LENGTH) >= 1 ? Number(process.env.WADDLE_RACE_MAX_ANSWER_LENGTH) : 1800,
+  pikaPengIrsEnabled: () => process.env.PIKAPENG_IRS_ENABLED !== 'false',
+  pikaPengIrsMinRestartIntervalSeconds: () => Number.isFinite(Number(process.env.PIKAPENG_IRS_MIN_RESTART_INTERVAL_SECONDS)) && Number(process.env.PIKAPENG_IRS_MIN_RESTART_INTERVAL_SECONDS) >= 0 ? Number(process.env.PIKAPENG_IRS_MIN_RESTART_INTERVAL_SECONDS) : 0,
   ktvCategoryId: () => process.env.KTV_CATEGORY_ID,
   ktvRentalPrice: () => Number.isInteger(Number(process.env.KTV_RENTAL_PRICE)) && Number(process.env.KTV_RENTAL_PRICE) >= 0 ? Number(process.env.KTV_RENTAL_PRICE) : 5,
   pengEmoji: () => process.env.PIKAPENG_EMOJI_ID && /^\d{17,20}$/.test(process.env.PIKAPENG_EMOJI_ID) ? `<:pikapeng:${process.env.PIKAPENG_EMOJI_ID}>` : '<:PikaPeng:1551565899331538975>',
