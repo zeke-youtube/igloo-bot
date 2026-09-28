@@ -1,0 +1,2 @@
+const { SlashCommandBuilder } = require('discord.js');
+module.exports = { data: new SlashCommandBuilder().setName('penglangkeys').setDescription('Learn PikaPengScreamingLang.'), async execute(i) { return i.reply({ ephemeral: true, content: '🐧 **PikaPengScreamingLang**\n\nA = 1 × a\nB = 2 × a\nC = 3 × a\n…\nZ = 26 × a\n\n1 space = next letter\n2 spaces = next word\n\nNumbers and punctuation stay unchanged.\n\n**Example:**\n`CAB`\n`aaa a aa`\n\n`CAB BAD`\n`aaa a aa  aa a aaaa`' }); } };
