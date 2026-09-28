@@ -16,6 +16,7 @@ const fishDrop = require('../fish-drop');
 const fishTheft = require('../fish-theft');
 
 async function handleButton(i) {
+  if (i.customId.startsWith('shop_')) return require('../commands/shop').button(i);
   if (i.customId.startsWith('stealfish_catch:')) return fishTheft.catchTheft(i, i.customId.slice('stealfish_catch:'.length));
   if (i.customId.startsWith('fishdrop:')) return fishDrop.claim(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('inbox_')) return inbox.handleButton(i);
