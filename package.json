@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Official PikaStudio Discord bot with a playful PikaPeng personality.",
   "main": "src/index.js",
-"scripts": {
+  "scripts": {
     "start": "node --watch src/index.js",
     "deploy": "node scripts/deploy-commands.js",
     "clear-commands": "node scripts/clear-commands.js",
@@ -12,7 +12,7 @@
     "import-opentdb": "node scripts/import-opentdb.js",
     "scripts": "node scripts/script-hub.js",
     "typecheck": "node scripts/typecheck.js",
-    "test": "node --test scripts/test-work.js scripts/test-timestamps.js scripts/test-bank.js scripts/test-pika-screaming.js scripts/test-waddle-race-answers.js scripts/test-secret-shield.js scripts/test-irs.js"
+    "test": "node --test scripts/test-work.js scripts/test-timestamps.js scripts/test-bank.js scripts/test-pika-screaming.js scripts/test-waddle-race-answers.js scripts/test-secret-shield.js"
   },
   "engines": {
     "node": ">=18.17.0"

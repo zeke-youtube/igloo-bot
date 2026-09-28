@@ -19,7 +19,6 @@ async function removeFish(userId, amount) { validateUser(userId); validateAmount
 async function transferFish(fromUserId, toUserId, amount) { validateUser(fromUserId); validateUser(toUserId); validateAmount(amount); if (amount < 1) throw new RangeError('Transfer amounts must be positive whole integers.'); if (fromUserId === toUserId) throw new RangeError('Users cannot transfer fish to themselves.'); return mutate(async () => { await load(); const senderBefore = balances[fromUserId] || 0; const recipientBefore = balances[toUserId] || 0; if (senderBefore < amount) throw new RangeError('Insufficient fish.'); balances[fromUserId] = senderBefore - amount; balances[toUserId] = recipientBefore + amount; try { await persist(); return { senderBalance: balances[fromUserId], recipientBalance: balances[toUserId] }; } catch (error) { balances[fromUserId] = senderBefore; balances[toUserId] = recipientBefore; throw error; } }); }
 async function resolveGamble(userId, amount, won) { validateUser(userId); validateAmount(amount); if (amount < 1) throw new RangeError('Gamble amounts must be positive whole integers.'); return mutate(async () => { await load(); const before = balances[userId] || 0; if (before < amount) throw new RangeError('Insufficient fish.'); const after = won ? before + amount : before - amount; balances[userId] = after; try { await persist(); return { before, after, won, stake: amount }; } catch (error) { balances[userId] = before; throw error; } }); }
 async function hasFish(userId, amount) { validateUser(userId); validateAmount(amount); return (await getFishBalance(userId)) >= amount; }
-async function getPositiveBalanceUserIds() { await load(); return Object.entries(balances).filter(([, amount]) => Number.isSafeInteger(amount) && amount > 0).map(([userId]) => userId); }
 
 async function transferAvailableFish(fromUserId, toUserId, requestedAmount) {
   validateUser(fromUserId); validateUser(toUserId); validateAmount(requestedAmount);
@@ -49,4 +48,4 @@ async function confiscateFish(thiefId, victimId, rate) {
   });
 }
 
-module.exports = { getFishBalance, getPositiveBalanceUserIds, addFish, removeFish, hasFish, transferFish, transferAvailableFish, confiscateFish, resolveGamble };
+module.exports = { getFishBalance, addFish, removeFish, hasFish, transferFish, transferAvailableFish, confiscateFish, resolveGamble };

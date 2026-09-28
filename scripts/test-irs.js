@@ -1,3 +1,0 @@
-const test = require('node:test'); const assert = require('node:assert/strict'); const irs = require('../src/pikaPeng-irs');
-test('IRS uses the assessment snapshot and floors both rates', () => { assert.deepEqual(irs.calculate(10001), { balanceAtAssessment: 10001, normalTax: 1000, jailTax: 2000 }); assert.deepEqual(irs.calculate(9), { balanceAtAssessment: 9, normalTax: 0, jailTax: 1 }); });
-test('IRS jail policy blocks economy games but permits safety/storage utilities', () => { for (const name of ['fish', 'fishprinter', 'gamble', 'work', 'waddle', 'contribute']) assert.equal(irs.canUseCommandWhileJailed(name), false); for (const name of ['storage', 'balance', 'help', 'announcements']) assert.equal(irs.canUseCommandWhileJailed(name), true); });
