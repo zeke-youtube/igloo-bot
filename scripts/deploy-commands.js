@@ -1,6 +1,6 @@
 const { REST, Routes } = require('discord.js');
 const config = require('../src/config');
-const names = ['about', 'help', 'pengfact', 'pikastudiosites', 'announcements', 'coinflip', 'clear', 'global-cooldown', 'createroom', 'doorbell', 'ktvmanage', 'fish', 'balance', 'givefish', 'gamble', 'profile', 'waddle', 'counting', 'qotd', 'publishad', 'boop', 'mail', 'inbox', 'storage', 'community-image', 'contribute', 'penglangkeys'];
+const names = ['about', 'help', 'pengfact', 'pikastudiosites', 'announcements', 'coinflip', 'clear', 'global-cooldown', 'createroom', 'doorbell', 'ktvmanage', 'fish', 'balance', 'givefish', 'gamble', 'profile', 'waddle', 'counting', 'qotd', 'publishad', 'boop', 'mail', 'inbox', 'storage', 'community-image', 'contribute', 'penglangkeys', 'sue', 'court', 'judge'];
 const commands = names.map(name => require(`../src/commands/${name}`).data.toJSON());
 try { config.validateEnv(); } catch (error) { console.error(`Deployment configuration error: ${error.message}`); process.exit(1); }
 (async () => { const rest = new REST({ version: '10' }).setToken(config.token()); await rest.put(Routes.applicationGuildCommands(config.clientId(), config.guildId()), { body: commands }); console.log(`Deployed ${commands.length} PengBot commands.`); })().catch(error => { console.error(`Discord command deployment failed: ${error.message}`); process.exitCode = 1; });
