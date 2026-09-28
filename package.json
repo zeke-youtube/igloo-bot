@@ -12,7 +12,7 @@
     "import-opentdb": "node scripts/import-opentdb.js",
     "scripts": "node scripts/script-hub.js",
     "typecheck": "node scripts/typecheck.js",
-    "test": "node --test scripts/test-work.js scripts/test-timestamps.js scripts/test-bank.js scripts/test-pika-screaming.js scripts/test-secret-shield.js"
+    "test": "node --test scripts/test-work.js scripts/test-timestamps.js scripts/test-bank.js scripts/test-pika-screaming.js scripts/test-waddle-race-answers.js scripts/test-secret-shield.js"
   },
   "engines": {
     "node": ">=18.17.0"
