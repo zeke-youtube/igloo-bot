@@ -33,7 +33,7 @@ module.exports = {
   ,bankInterestRate: () => 0.01
   ,bankCompoundPeriods: () => 10
   ,bankMaxDeposit: () => Number.isSafeInteger(Number(process.env.BANK_MAX_DEPOSIT)) && Number(process.env.BANK_MAX_DEPOSIT) > 0 ? Number(process.env.BANK_MAX_DEPOSIT) : Number.MAX_SAFE_INTEGER
-  ,ramMarket: () => ({ ddr5_8gb_price_ntd: 4399, salmon_100g_price_ntd: 200, updated_at: '2026-09-26' })
+  ,ramMarket: () => ({ ddr5_8gb_price_ntd: 3968, salmon_100g_price_ntd: 210, updated_at: '2026-09-26' })
   ,rent: () => ({ enabled: true, priceFish: 500, durationDays: 30, gracePeriodHours: 24, maxTextChannels: 10, maxVoiceChannels: 5, maxTotalChannels: 15, maxChannelNameLength: 50, maxCategoryNameLength: 50 })
   ,chairHistoryLimit: () => 100
 };
