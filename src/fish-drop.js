@@ -52,11 +52,11 @@ async function expireActiveDrop() {
   await disableDrop(activeDrop, `${config.pengEmoji()} Fish Drop expired. A fresh drop is on the way.`);
 }
 
-async function postDrop(client, now = Date.now()) {
+async function postDrop(client, now = Date.now(), { bypassActivityCheck = false } = {}) {
   const channelId = config.fishDropChannelId();
   const channel = channelId ? await client.channels.fetch(channelId).catch((error) => { logger.error(`Fish Drop channel fetch failed for ${channelId}`, error); return null; }) : null;
   if (!channel?.isTextBased() || typeof channel.send !== 'function') { logger.error(`Fish Drop skipped: configured channel ${channelId || '(missing)'} is unavailable or not text-capable.`); return null; }
-  if (!hasRecentActivity(channel.guildId || channel.guild?.id, now)) {
+  if (!bypassActivityCheck && !hasRecentActivity(channel.guildId || channel.guild?.id, now)) {
     logger.info('Fish Drop skipped: no human server activity in the last 60 minutes');
     return null;
   }
@@ -92,8 +92,10 @@ async function start(client) {
   if (schedulerStarted) return false;
   schedulerStarted = true;
   logger.info(`Fish Drop scheduler started (interval ${FISH_DROP_INTERVAL_MS}ms)`);
-  await postDrop(client);
-  timer = setInterval(() => postDrop(client).catch((error) => logger.error('Fish Drop scheduler failed', error)), FISH_DROP_INTERVAL_MS);
+  logger.info('Fish Drop startup drop triggered');
+  const startupDrop = await postDrop(client, Date.now(), { bypassActivityCheck: true });
+  if (startupDrop) logger.info('Fish Drop sent successfully');
+  timer = setInterval(() => postDrop(client, Date.now(), { bypassActivityCheck: false }).catch((error) => logger.error('Fish Drop scheduler failed', error)), FISH_DROP_INTERVAL_MS);
   timer.unref?.();
   return true;
 }
