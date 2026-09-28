@@ -4,6 +4,7 @@ const ktv = require('../ktv-manager');
 const doorbell = require('../doorbell-manager');
 const manage = require('../commands/ktvmanage');
 async function handleSelect(i) {
+  if (i.customId.startsWith('uber_food:')) return require('../commands/pikauber').select(i);
   if (!i.customId.startsWith('ktv_')) return false;
   const [action, channelId] = i.customId.split(':'); const room = await manage.owned(i, channelId);
   if (!room) return i.reply({ content: '🏚️ This KTV rental is no longer active.', ephemeral: true });
