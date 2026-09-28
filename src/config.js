@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config(); const path = require('node:path');
 
 const required = ['DISCORD_TOKEN', 'CLIENT_ID', 'GUILD_ID', 'ANNOUNCEMENTS_CHANNEL_ID', 'KTV_CATEGORY_ID'];
 function validateEnv() {
@@ -25,6 +25,7 @@ module.exports = {
   pengEmojiId: () => process.env.PIKAPENG_EMOJI_ID && /^\d{17,20}$/.test(process.env.PIKAPENG_EMOJI_ID) ? process.env.PIKAPENG_EMOJI_ID : '1551565899331538975',
   staffRoleIds: () => csv(process.env.STAFF_ROLE_IDS || process.env.STAFF_ROLE_ID),
   allowAnnouncementMentions: () => process.env.ALLOW_ANNOUNCEMENT_MENTIONS === 'true'
+  ,pikaCloudStorageDir: () => process.env.PIKACLOUD_STORAGE_DIR || path.join(__dirname, 'data', 'pikacloud-files')
   ,stealFishAmount: () => 10
   ,stealFishDurationMs: () => Number.isInteger(Number(process.env.STEAL_DURATION_MS)) && Number(process.env.STEAL_DURATION_MS) > 0 ? Number(process.env.STEAL_DURATION_MS) : 60 * 60 * 1000
   ,policePengConfiscationRate: () => 0.50
@@ -33,10 +34,6 @@ module.exports = {
   ,bankCompoundPeriods: () => 10
   ,bankMaxDeposit: () => Number.isSafeInteger(Number(process.env.BANK_MAX_DEPOSIT)) && Number(process.env.BANK_MAX_DEPOSIT) > 0 ? Number(process.env.BANK_MAX_DEPOSIT) : Number.MAX_SAFE_INTEGER
   ,ramMarket: () => ({ ddr5_8gb_price_ntd: 4399, salmon_100g_price_ntd: 200, updated_at: '2026-09-26' })
-  ,shopCreateCost: () => 500
-  ,shopMaxProductPrice: () => 1000000
-  ,shopMaxProducts: () => 50
-  ,shopMaxQuantity: () => 100
   ,rent: () => ({ enabled: true, priceFish: 500, durationDays: 30, gracePeriodHours: 24, maxTextChannels: 10, maxVoiceChannels: 5, maxTotalChannels: 15, maxChannelNameLength: 50, maxCategoryNameLength: 50 })
   ,chairHistoryLimit: () => 100
 };
