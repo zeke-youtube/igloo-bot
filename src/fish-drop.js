@@ -73,17 +73,20 @@ async function postDrop(client, now = Date.now(), { bypassActivityCheck = false 
 async function claim(interaction, token) {
   return withClaimLock(token, async () => {
     const drop = activeDrop;
-    if (!drop || drop.token !== token || drop.claimed || drop.expired) return interaction.reply({ content: `${config.pengEmoji()} Too slow! Someone already grabbed this fish.`, ephemeral: true });
+    if (!drop || drop.token !== token || drop.claimed || drop.expired) return interaction.reply({ content: `${config.pengEmoji()} Too slow! Someone already grabbed this fish.`, ephemeral: true }).catch(() => null);
     drop.claimed = true;
+    let credited = false;
     try {
       const balance = await economy.addFish(interaction.user.id, FISH_DROP_REWARD);
+      credited = true;
       await interaction.update({ embeds: [new EmbedBuilder().setColor(0x6bd6e8).setTitle(`${config.pengEmoji()} FISH CLAIMED!`).setDescription(`<@${interaction.user.id}> grabbed the fish!\n\n🐟 **+${FISH_DROP_REWARD} fish**\n\nBalance: **${balance} fish**`).setFooter({ text: 'PengBot - PikaStudio' })], components: [] });
       logger.info(`Fish Drop claimed by ${interaction.user.id}`);
       return { claimed: true, balance };
     } catch (error) {
-      drop.claimed = false;
+      if (!credited) drop.claimed = false;
       logger.error(`Fish Drop claim failed for ${interaction.user.id}`, error);
-      return interaction.reply({ content: `${config.pengEmoji()} PikaPeng dropped the fish paperwork. Please try again.`, ephemeral: true });
+      if (interaction.replied || interaction.deferred) return null;
+      return interaction.reply({ content: `${config.pengEmoji()} PikaPeng dropped the fish paperwork. Please try again.`, ephemeral: true }).catch(() => null);
     }
   });
 }
