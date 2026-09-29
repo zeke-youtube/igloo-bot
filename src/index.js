@@ -17,6 +17,7 @@ setInterval(() => pikacloud.billing().catch((error) => logger.error('PikaCloud b
 async function shutdown(signal) { if (shuttingDown) return; shuttingDown = true; logger.info(`${signal} received; cleaning temporary KTV rooms.`); await fishDrop.stop(); await waddleRace.stop(); await cleanupShutdown(client).catch((error) => logger.error('KTV shutdown cleanup failed', error)); client.destroy(); process.exit(0); }
 process.once('SIGINT', () => shutdown('SIGINT')); process.once('SIGTERM', () => shutdown('SIGTERM'));
 client.commands.set('afk', require('./commands/afk'));
+client.commands.set('awayboard', require('./commands/awayboard'));
 client.on('messageCreate', async (message) => {
   await afk.handleMessage(message).catch((error) => logger.error('AFK message handling failed', error));
   if ((await secretShield.inspect(message)).handled) return;

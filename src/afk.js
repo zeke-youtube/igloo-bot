@@ -12,6 +12,16 @@ async function load() { if (loaded) return; try { const parsed = JSON.parse(awai
 async function save() { await fs.writeFile(storePath, `${JSON.stringify(states, null, 2)}\n`, 'utf8'); }
 function formatReason(reason) { const trimmed = typeof reason === 'string' ? reason.trim() : ''; return (trimmed || DEFAULT_REASON).slice(0, MAX_REASON_LENGTH); }
 function duration(timestamp) { return `<t:${Math.floor(timestamp / 1000)}:R>`; }
+function durationText(timestamp, now = Date.now()) {
+  let seconds = Math.max(0, Math.floor((now - timestamp) / 1000));
+  const days = Math.floor(seconds / 86400); seconds %= 86400;
+  const hours = Math.floor(seconds / 3600); seconds %= 3600;
+  const minutes = Math.floor(seconds / 60);
+  if (days) return `${days} day${days === 1 ? '' : 's'}${hours ? ` ${hours} hour${hours === 1 ? '' : 's'}` : ''}`;
+  if (hours) return `${hours} hour${hours === 1 ? '' : 's'}${minutes ? ` ${minutes} minute${minutes === 1 ? '' : 's'}` : ''}`;
+  return `${minutes} minute${minutes === 1 ? '' : 's'}`;
+}
+async function getAll() { return mutate(async () => { await load(); return Object.values(states).map((state) => ({ ...state })); }); }
 async function set(userId, reason) { return mutate(async () => { await load(); const state = { userId, reason: formatReason(reason), since: Date.now() }; states[userId] = state; await save(); return state; }); }
 async function handleMessage(message) {
   if (message.author?.bot) return;
@@ -25,4 +35,4 @@ async function handleMessage(message) {
     await message.reply(notices.map(({ userId, state }) => `<@${userId}> is AFK: ${state.reason} (${duration(state.since)}).`).join('\n')).catch(() => {});
   });
 }
-module.exports = { set, handleMessage, DEFAULT_REASON, MAX_REASON_LENGTH };
+module.exports = { set, getAll, handleMessage, duration, durationText, formatReason, DEFAULT_REASON, MAX_REASON_LENGTH };
