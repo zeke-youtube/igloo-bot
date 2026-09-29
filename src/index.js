@@ -1,5 +1,6 @@
 const { Client, GatewayIntentBits, Collection, PermissionFlagsBits } = require('discord.js');
 const secretShield = require('./security/secretShieldHandler');
+const afk = require('./afk');
 const config = require('./config'); const logger = require('./utils/logger'); const counting = require('./counting'); const qotd = require('./qotd'); const fishDrop = require('./fish-drop'); const fishTheft = require('./fish-theft'); const bank = require('./bank'); const ram = require('./ram'); const rent = require('./rent'); const pikacloud = require('./pikacloud'); const waddleRace = require('./waddle-race');
 config.validateEnv(); ram.market();
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildVoiceStates] }); client.commands = new Collection();
@@ -15,7 +16,9 @@ client.once('clientReady', scheduleQotd);
 setInterval(() => pikacloud.billing().catch((error) => logger.error('PikaCloud billing failed', error)), 60 * 60 * 1000);
 async function shutdown(signal) { if (shuttingDown) return; shuttingDown = true; logger.info(`${signal} received; cleaning temporary KTV rooms.`); await fishDrop.stop(); await waddleRace.stop(); await cleanupShutdown(client).catch((error) => logger.error('KTV shutdown cleanup failed', error)); client.destroy(); process.exit(0); }
 process.once('SIGINT', () => shutdown('SIGINT')); process.once('SIGTERM', () => shutdown('SIGTERM'));
+client.commands.set('afk', require('./commands/afk'));
 client.on('messageCreate', async (message) => {
+  await afk.handleMessage(message).catch((error) => logger.error('AFK message handling failed', error));
   if ((await secretShield.inspect(message)).handled) return;
   fishDrop.recordActivity(message);
   waddleRace.recordActivity(message);
