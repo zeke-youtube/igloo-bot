@@ -13,6 +13,8 @@ PengBot is the official-feeling PikaPeng companion for the PikaStudio Discord se
 
 FriendUber uses the Discord `GuildPresences` gateway intent to show only listed members whose status is online. Enable **Presence Intent** under the bot's **Privileged Gateway Intents** in the Discord Developer Portal if Discord requires it for this application.
 
+Set `STAFF_LIST_CHANNEL_ID` in `.env` to the channel where IglooBot should maintain the live PikaStudio staff list. It uses the fixed verified staff role `1551168459159896166`; the maintained message ID is saved in `src/data/staff-list.json` (persisted by the existing Docker data volume).
+
 To remove every slash command registered by this PengBot application, run `npm run clear-commands`. This does not remove commands belonging to another bot/application.
 
 ## Docker / QNAP deployment

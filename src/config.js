@@ -16,6 +16,7 @@ module.exports = {
   clientId: () => process.env.CLIENT_ID,
   guildId: () => process.env.GUILD_ID,
   announcementsChannelId: () => process.env.ANNOUNCEMENTS_CHANNEL_ID,
+  staffListChannelId: () => process.env.STAFF_LIST_CHANNEL_ID || null,
   commandsOnlyChannelId: () => process.env.COMMANDS_ONLY_CHANNEL_ID || null,
   typingChannelId: () => process.env.TYPING_CHANNEL_ID || null,
   fishDropChannelId: () => process.env.FISH_DROP_CHANNEL_ID || null,
