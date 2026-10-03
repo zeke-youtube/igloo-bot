@@ -11,6 +11,8 @@ PengBot is the official-feeling PikaPeng companion for the PikaStudio Discord se
 5. Run `npm run deploy` to register guild slash commands.
 6. Run `npm start`.
 
+FriendUber uses the Discord `GuildPresences` gateway intent to show only listed members whose status is online. Enable **Presence Intent** under the bot's **Privileged Gateway Intents** in the Discord Developer Portal if Discord requires it for this application.
+
 To remove every slash command registered by this PengBot application, run `npm run clear-commands`. This does not remove commands belonging to another bot/application.
 
 ## Docker / QNAP deployment
@@ -41,5 +43,6 @@ The Compose volume `igloobot_data` persists Fish balances and KTV tracking data 
 - `/clear amount:<1-100>` lets members with Manage Messages remove recent messages.
 - `/global-cooldown seconds:<0-21600>` applies slowmode across all text channels for authorized staff.
 - `/createroom` creates one temporary voice KTV per user inside the configured PikaPeng KTV category.
+- `/frienduber find`, `stock`, `unstock`, `status`, `block`, and `unblock` provide the server-only FriendUber service. FriendUber must first be purchased from `/shop`; sessions use Fish only and give neither user authority over the other.
 
 Announcement mentions are escaped by default. Set `ALLOW_ANNOUNCEMENT_MENTIONS=true` only when intentional. Never place bot tokens in source control.
