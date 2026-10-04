@@ -2,6 +2,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const config = require('../config');
 
 module.exports = {
+  accessLabel: 'Manage Messages',
   data: new SlashCommandBuilder()
     .setName('clear')
     .setDescription('Delete recent messages from this channel (staff only).')

@@ -16,6 +16,7 @@ const fishDrop = require('../fish-drop');
 const fishTheft = require('../fish-theft');
 
 async function handleButton(i) {
+  if (i.customId.startsWith('listallcommands:')) return require('../commands/listallcommands').button(i);
   if (i.customId.startsWith('awayboard:')) return require('../commands/awayboard').button(i);
   if (i.customId.startsWith('uber_')) return require('../commands/pikauber').button(i);
   if (i.customId.startsWith('frienduber_end:')) return require('../commands/frienduber').button(i);

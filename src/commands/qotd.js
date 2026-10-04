@@ -9,7 +9,7 @@ const data = new SlashCommandBuilder().setName('qotd').setDescription('Manage th
   .addSubcommand((s) => s.setName('send').setDescription('Post a rewardless test question here.'))
   .addSubcommand((s) => s.setName('status').setDescription('Show QOTD status.'));
 
-module.exports = { data, async execute(i) {
+module.exports = { data, restrictedSubcommands: { setup: 'Manage Server', disable: 'Manage Server', now: 'Manage Server', send: 'Manage Server' }, async execute(i) {
   const sub = i.options.getSubcommand();
   if (sub !== 'status' && !i.memberPermissions.has(PermissionFlagsBits.ManageGuild)) return i.reply({ content: `${config.pengEmoji()} Manage Server permission is required.`, ephemeral: true });
   if (sub === 'setup') { const channel = i.options.getChannel('channel'); if (!channel.isTextBased()) return i.reply({ content: 'Choose a text channel.', ephemeral: true }); await qotd.configure(i.guildId, channel.id); return i.reply({ content: `${config.pengEmoji()} QOTD is enabled in ${channel}.` }); }

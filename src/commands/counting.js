@@ -8,7 +8,7 @@ const data = new SlashCommandBuilder().setName('counting').setDescription('Play 
   .addSubcommand((s) => s.setName('leaderboard').setDescription('Show the counting leaderboard.'))
   .addSubcommand((s) => s.setName('stats').setDescription('Show counting statistics.'));
 
-module.exports = { data, async execute(i) {
+module.exports = { data, restrictedSubcommands: { setup: 'Manage Server', reset: 'Manage Server' }, async execute(i) {
   const sub = i.options.getSubcommand();
   if ((sub === 'setup' || sub === 'reset') && !i.memberPermissions.has(PermissionFlagsBits.ManageGuild)) return i.reply({ content: `${config.pengEmoji()} You need Manage Server permission for that.`, ephemeral: true });
   if (sub === 'setup') { const channel = i.options.getChannel('channel'); if (!channel.isTextBased()) return i.reply({ content: 'Please choose a text channel.', ephemeral: true }); await counting.configure(i.guildId, channel.id); return i.reply({ content: `${config.pengEmoji()} Counting channel configured: ${channel}.\nThe first valid number is **1**.` }); }

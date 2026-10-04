@@ -45,4 +45,6 @@ module.exports = {
   ,ramMarket: () => ({ ddr5_8gb_price_ntd: 3968, salmon_100g_price_ntd: 210, updated_at: '2026-09-26' })
   ,rent: () => ({ enabled: true, priceFish: 500, durationDays: 30, gracePeriodHours: 24, maxTextChannels: 10, maxVoiceChannels: 5, maxTotalChannels: 15, maxChannelNameLength: 50, maxCategoryNameLength: 50 })
   ,chairHistoryLimit: () => 100
+  ,monitorRentalPricePerDay: () => Number.isSafeInteger(Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY)) && Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY) >= 0 ? Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY) : 50
+  ,monitorMaxActivePerUser: () => Number.isSafeInteger(Number(process.env.MONITOR_MAX_ACTIVE_PER_USER)) && Number(process.env.MONITOR_MAX_ACTIVE_PER_USER) > 0 ? Number(process.env.MONITOR_MAX_ACTIVE_PER_USER) : 3
 };

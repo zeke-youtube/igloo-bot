@@ -24,4 +24,4 @@ async function execute(i) { const sub = i.options.getSubcommand(); const id = i.
   if (sub === 'cancel') { try { await cloud.cancel(id); return i.reply('☁️ Automatic renewal disabled; storage remains active until expiry.'); } catch(e) { return i.reply({content:`☁️ ${e.message}`,ephemeral:true}); } }
   if (sub === 'admin-status') { if (!i.memberPermissions?.has(PermissionFlagsBits.Administrator)) return i.reply({content:'Administrator access required.',ephemeral:true}); const s=await cloud.adminStatus(); return i.reply(`☁️ **PikaCloud Status**\nAllocated: ${cloud.fmt(s.allocated)} / 100 GB\nActual Used: ${cloud.fmt(s.actual)}\nActive subscriptions: ${s.active}\nGrace period: ${s.grace}\nAvailable allocation: ${cloud.fmt(cloud.MAX_ALLOCATED-s.allocated)}`); }
 }
-module.exports = { data, execute };
+module.exports = { data, restrictedSubcommands: { 'admin-status': 'Administrator' }, execute };

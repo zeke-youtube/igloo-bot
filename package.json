@@ -12,12 +12,13 @@
     "import-opentdb": "node scripts/import-opentdb.js",
     "scripts": "node scripts/script-hub.js",
     "typecheck": "node scripts/typecheck.js",
-    "test": "node --test scripts/test-work.js scripts/test-timestamps.js scripts/test-bank.js scripts/test-pika-screaming.js scripts/test-waddle-race-answers.js scripts/test-secret-shield.js scripts/test-staff-list.js"
+    "test": "node --test scripts/test-work.js scripts/test-timestamps.js scripts/test-bank.js scripts/test-pika-screaming.js scripts/test-pikascreaminglang-command.js scripts/test-waddle-race-answers.js scripts/test-secret-shield.js scripts/test-staff-list.js scripts/test-listallcommands.js scripts/test-ping.js scripts/test-member-features.js"
   },
   "engines": {
     "node": ">=18.17.0"
   },
   "dependencies": {
+    "chess.js": "^1.4.0",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
     "sharp": "^0.33.5"
