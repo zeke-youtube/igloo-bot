@@ -4,6 +4,8 @@ const ktv = require('../ktv-manager');
 const doorbell = require('../doorbell-manager');
 const manage = require('../commands/ktvmanage');
 async function handleSelect(i) {
+  if (i.customId.startsWith('pengongus_heat:')) return require('../games/pengongus/manager').selectHeat(i);
+  if (i.customId.startsWith('pengongus_vote:')) return require('../games/pengongus/manager').castVote(i);
   if (i.customId.startsWith('frienduber_select:')) return require('../commands/frienduber').select(i);
   if (i.customId.startsWith('uber_food:')) return require('../commands/pikauber').select(i);
   if (!i.customId.startsWith('ktv_')) return false;

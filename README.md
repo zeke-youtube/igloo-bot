@@ -54,6 +54,7 @@ Announcement mentions are escaped by default. Set `ALLOW_ANNOUNCEMENT_MENTIONS=t
 ## Member commands
 
 - `/shutdownbot` and `/openbot` are restricted to `BOT_OWNER_ID` in `.env`. Shutdown mode persists in the existing member feature JSON store, keeps Discord connected, sets the bot invisible, and blocks normal commands and interactions. The owner can reopen it without restarting.
+- `/pengongus start` opens one server lobby for 4–10 players. The host starts it in a private channel. Waddlers complete two private tasks, Pengostors can use the 40°C heater once per round, and active players privately vote after an Emergency Waddle. Matches are limited to eight rounds; inactive lobbies expire after 15 minutes, and result channels close after 90 seconds. Games persist in the existing member feature JSON file and stale matches are ended safely on restart.
 
 - `/timezone zone:Asia/Taipei` saves an IANA timezone; `/time member:@name` shows the member's current local date and time. Timezones are stored in `src/data/member-features.json`.
 - `/wikipengia query:Linux language:en` searches Wikimedia's MediaWiki API. Supported language codes are `en`, `zh`, `zh-tw`, `fr`, `de`, `es`, `ja`, `ko`, `ru`, `pt`, `it`, and `nl`.

@@ -1,6 +1,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 const config = require('../config');
 async function handleModal(i) {
+  if (i.customId.startsWith('pengongus_task:')) return require('../games/pengongus/manager').submitTask(i);
   if (i.customId.startsWith('inbox_reply_modal:')) return require('./inbox').handleReplyModal(i);
   if (i.customId === 'gamble_modal') { const gamble = require('../commands/gamble'); return gamble.submit(i); }
   if (i.customId.startsWith('qotd_test_answer:')) { const qotd = require('../qotd'); const result = await qotd.answerTest(i, i.customId.split(':')[1], i.fields.getTextInputValue('qotd_answer')); if (result.expired) return i.reply({ content: '⌛ This test question has expired.', ephemeral: true }); if (result.attempted) return i.reply({ content: '🐧 You already answered this test question.', ephemeral: true }); return i.reply({ content: result.correct ? '✅ Correct! This was a rewardless test question.' : '❌ Not quite! This was a rewardless test question.', ephemeral: true }); }

@@ -16,6 +16,8 @@ const fishDrop = require('../fish-drop');
 const fishTheft = require('../fish-theft');
 
 async function handleButton(i) {
+  if (i.customId.startsWith('pengongus:')) return require('../games/pengongus/manager').button(i);
+  if (i.customId.startsWith('pengongus_early:')) return require('../games/pengongus/manager').earlyVote(i);
   if (i.customId.startsWith('listallcommands:')) return require('../commands/listallcommands').button(i);
   if (i.customId.startsWith('awayboard:')) return require('../commands/awayboard').button(i);
   if (i.customId.startsWith('uber_')) return require('../commands/pikauber').button(i);
