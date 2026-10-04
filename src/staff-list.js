@@ -36,6 +36,7 @@ function memberOrder(a, b) {
 }
 
 async function refresh(client) {
+  if (await require('./bot-mode').isClosed()) return false;
   const channelId = require('./config').staffListChannelId();
   if (!channelId) {
     logger.error('Staff list is disabled: STAFF_LIST_CHANNEL_ID is not configured.');

@@ -47,4 +47,5 @@ module.exports = {
   ,chairHistoryLimit: () => 100
   ,monitorRentalPricePerDay: () => Number.isSafeInteger(Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY)) && Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY) >= 0 ? Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY) : 50
   ,monitorMaxActivePerUser: () => Number.isSafeInteger(Number(process.env.MONITOR_MAX_ACTIVE_PER_USER)) && Number(process.env.MONITOR_MAX_ACTIVE_PER_USER) > 0 ? Number(process.env.MONITOR_MAX_ACTIVE_PER_USER) : 3
+  ,botOwnerId: () => process.env.BOT_OWNER_ID || null
 };

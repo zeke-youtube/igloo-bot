@@ -1,7 +1,7 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const file = path.join(__dirname, 'data', 'member-features.json');
-let state = { timezones: {}, pengwater: {}, chess: { games: {}, stats: {} }, monitors: {} };
+let state = { timezones: {}, pengwater: {}, chess: { games: {}, stats: {} }, monitors: {}, botClosed: false };
 let loaded = false, queue = Promise.resolve();
 async function load() { if (loaded) return; try { state = { ...state, ...JSON.parse(await fs.readFile(file, 'utf8')) }; } catch {} state.timezones ||= {}; state.pengwater ||= {}; state.chess ||= { games: {}, stats: {} }; state.chess.games ||= {}; state.chess.stats ||= {}; state.monitors ||= {}; loaded = true; }
 async function save() { await fs.mkdir(path.dirname(file), { recursive: true }); const tmp = `${file}.tmp`; await fs.writeFile(tmp, `${JSON.stringify(state, null, 2)}\n`); await fs.rename(tmp, file); }

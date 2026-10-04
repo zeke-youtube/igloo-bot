@@ -53,6 +53,8 @@ Announcement mentions are escaped by default. Set `ALLOW_ANNOUNCEMENT_MENTIONS=t
 
 ## Member commands
 
+- `/shutdownbot` and `/openbot` are restricted to `BOT_OWNER_ID` in `.env`. Shutdown mode persists in the existing member feature JSON store, keeps Discord connected, sets the bot invisible, and blocks normal commands and interactions. The owner can reopen it without restarting.
+
 - `/timezone zone:Asia/Taipei` saves an IANA timezone; `/time member:@name` shows the member's current local date and time. Timezones are stored in `src/data/member-features.json`.
 - `/wikipengia query:Linux language:en` searches Wikimedia's MediaWiki API. Supported language codes are `en`, `zh`, `zh-tw`, `fr`, `de`, `es`, `ja`, `ko`, `ru`, `pt`, `it`, and `nl`.
 - `/pepy package:requests` reads package metadata from PyPI. It does not install packages.
