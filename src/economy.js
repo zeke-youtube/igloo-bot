@@ -1,14 +1,16 @@
 const fs = require('node:fs/promises');
 const path = require('node:path');
 
-const storePath = path.join(__dirname, 'data', 'fish-balances.json');
+const storePath = path.join(process.env.IGLOOBOT_DATA_DIR || path.join(__dirname, 'data'), 'fish-balances.json');
 let balances = {};
 let loaded = false;
 let writeQueue = Promise.resolve();
 let mutationQueue = Promise.resolve();
+const BIRTHDAY_LEDGER_KEY = '__birthdayRewardLedger';
+let birthdayLedger = {};
 
-async function load() { if (loaded) return; try { balances = JSON.parse(await fs.readFile(storePath, 'utf8')); } catch { balances = {}; } loaded = true; }
-async function persist() { writeQueue = writeQueue.then(() => fs.writeFile(storePath, `${JSON.stringify(balances, null, 2)}\n`, 'utf8')); return writeQueue; }
+async function load() { if (loaded) return; try { balances = JSON.parse(await fs.readFile(storePath, 'utf8')); birthdayLedger = balances[BIRTHDAY_LEDGER_KEY] || {}; delete balances[BIRTHDAY_LEDGER_KEY]; } catch { balances = {}; birthdayLedger = {}; } loaded = true; }
+async function persist() { const snapshot = { ...balances, [BIRTHDAY_LEDGER_KEY]: birthdayLedger }; writeQueue = writeQueue.then(async () => { const temporaryPath = `${storePath}.tmp`; await fs.writeFile(temporaryPath, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8'); await fs.rename(temporaryPath, storePath); }); return writeQueue; }
 function validateUser(userId) { if (!userId || typeof userId !== 'string') throw new TypeError('A Discord user ID is required.'); }
 function validateAmount(amount) { if (!Number.isInteger(amount) || amount < 0) throw new RangeError('Fish amounts must be non-negative whole integers.'); }
 
@@ -48,4 +50,24 @@ async function confiscateFish(thiefId, victimId, rate) {
   });
 }
 
-module.exports = { getFishBalance, addFish, removeFish, hasFish, transferFish, transferAvailableFish, confiscateFish, resolveGamble };
+async function awardBirthdayFish(guildId, userId, celebrationYear, amount = 1000) {
+  validateUser(guildId); validateUser(userId); validateAmount(amount);
+  if (!Number.isInteger(celebrationYear) || celebrationYear < 2000) throw new RangeError('A valid birthday celebration year is required.');
+  const key = `${guildId}:${userId}:${celebrationYear}`;
+  return mutate(async () => {
+    await load();
+    if (birthdayLedger[key]) return { awarded: false, balance: balances[userId] || 0, reward: birthdayLedger[key] };
+    const before = balances[userId] || 0;
+    const reward = { guildId, userId, celebrationYear, amount, awardedAt: new Date().toISOString() };
+    balances[userId] = before + amount;
+    birthdayLedger[key] = reward;
+    try { await persist(); return { awarded: true, balance: balances[userId], reward }; }
+    catch (error) { balances[userId] = before; delete birthdayLedger[key]; throw error; }
+  });
+}
+async function hasBirthdayReward(guildId, userId, celebrationYear) {
+  validateUser(guildId); validateUser(userId); await load();
+  return Boolean(birthdayLedger[`${guildId}:${userId}:${celebrationYear}`]);
+}
+
+module.exports = { getFishBalance, addFish, removeFish, hasFish, transferFish, transferAvailableFish, confiscateFish, resolveGamble, awardBirthdayFish, hasBirthdayReward };

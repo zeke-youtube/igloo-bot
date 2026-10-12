@@ -29,7 +29,9 @@ View logs with:
 docker compose logs -f igloobot
 ```
 
-The Compose volume `igloobot_data` persists Fish balances and KTV tracking data stored under `src/data`. Stop the bot with `docker compose down`; the named data volume is retained.
+The Compose volume `igloobot_data` persists Fish balances, birthday records and reward history, and KTV tracking data stored under `src/data`. Stop the bot with `docker compose down`; the named data volume is retained.
+
+Birthday announcements use the configured `ANNOUNCEMENTS_CHANNEL_ID` by default. The bot needs View Channel, Send Messages, Embed Links, Read Message History, and Manage Roles in that channel/server. Keep the birthday role below the bot's highest role. Staff can override the birthday channel or select a role with `/birthday config`.
 
 ## Commands
 
@@ -41,5 +43,6 @@ The Compose volume `igloobot_data` persists Fish balances and KTV tracking data 
 - `/clear amount:<1-100>` lets members with Manage Messages remove recent messages.
 - `/global-cooldown seconds:<0-21600>` applies slowmode across all text channels for authorized staff.
 - `/createroom` creates one temporary voice KTV per user inside the configured PikaPeng KTV category.
+- `/birthday set|view|remove|upcoming|config` manages opt-in birthdays; same-day registrations are processed immediately, and staff configure announcements and the birthday role.
 
 Announcement mentions are escaped by default. Set `ALLOW_ANNOUNCEMENT_MENTIONS=true` only when intentional. Never place bot tokens in source control.
