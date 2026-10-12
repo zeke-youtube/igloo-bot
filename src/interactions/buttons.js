@@ -4,7 +4,6 @@ const logger = require('../utils/logger');
 const doorbell = require('../doorbell-manager');
 const ktv = require('../ktv-manager');
 const manage = require('../commands/ktvmanage');
-const fish = require('../commands/fish');
 const rental = require('../ktv-rental');
 const givefish = require('../commands/givefish');
 const gamble = require('../commands/gamble');
@@ -27,7 +26,6 @@ async function handleButton(i) {
   if (i.customId.startsWith('stealfish_catch:')) return fishTheft.catchTheft(i, i.customId.slice('stealfish_catch:'.length));
   if (i.customId.startsWith('fishdrop:')) return fishDrop.claim(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('inbox_')) return inbox.handleButton(i);
-  if (i.customId.startsWith('fish_')) return fish.handleButton(i);
   if (i.customId.startsWith('givefish_confirm:')) return givefish.confirm(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('givefish_cancel:')) return givefish.cancel(i, i.customId.split(':')[1]);
   if (i.customId.startsWith('gamble_play:')) return gamble.play(i, i.customId.split(':')[1]);

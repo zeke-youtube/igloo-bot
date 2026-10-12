@@ -49,6 +49,7 @@ Birthday announcements use the configured `ANNOUNCEMENTS_CHANNEL_ID` by default.
 - `/clear amount:<1-100>` lets members with Manage Messages remove recent messages.
 - `/global-cooldown seconds:<0-21600>` applies slowmode across all text channels for authorized staff.
 - `/createroom` creates one temporary voice KTV per user inside the configured PikaPeng KTV category.
+- `/fish` catches weighted Fish rewards with a persistent 30-second cooldown; catch records and payouts share the Fish balance store.
 - `/frienduber find`, `stock`, `unstock`, `status`, `block`, and `unblock` provide the server-only FriendUber service. FriendUber must first be purchased from `/shop`; sessions use Fish only and give neither user authority over the other.
 - `/birthday set|view|remove|upcoming|config` manages opt-in birthdays; same-day registrations are processed immediately, and staff configure announcements and the birthday role.
 - `/terminal command:<give-me-fish|give-me-admin>` displays fictional terminal responses and has no effect on Fish or roles.

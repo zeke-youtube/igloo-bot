@@ -8,11 +8,12 @@ let loaded = false;
 let writeQueue = Promise.resolve();
 let mutationQueue = Promise.resolve();
 const BIRTHDAY_LEDGER_KEY = '__birthdayRewardLedger';
+const FISHING_LEDGER_KEY = '__fishingLedger';
 let birthdayLedger = {};
+let fishingLedger = { cooldowns: {}, interactions: {} };
 
-async function load() { if (loaded) return; try { balances = JSON.parse(await fs.readFile(storePath, 'utf8')); birthdayLedger = balances[BIRTHDAY_LEDGER_KEY] || {}; delete balances[BIRTHDAY_LEDGER_KEY]; } catch { balances = {}; birthdayLedger = {}; } loaded = true; }
-async function load() { if (loaded) return; try { balances = JSON.parse(await fs.readFile(storePath, 'utf8')); birthdayLedger = balances[BIRTHDAY_LEDGER_KEY] || {}; friendUberLedger = balances.__friendUberLedger || {}; delete balances[BIRTHDAY_LEDGER_KEY]; delete balances.__friendUberLedger; } catch { balances = {}; birthdayLedger = {}; friendUberLedger = {}; } loaded = true; }
-async function persist() { const snapshot = { ...balances, [BIRTHDAY_LEDGER_KEY]: birthdayLedger, __friendUberLedger: friendUberLedger }; writeQueue = writeQueue.then(async () => { const temporaryPath = `${storePath}.tmp`; await fs.writeFile(temporaryPath, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8'); await fs.rename(temporaryPath, storePath); }); return writeQueue; }
+async function load() { if (loaded) return; try { balances = JSON.parse(await fs.readFile(storePath, 'utf8')); birthdayLedger = balances[BIRTHDAY_LEDGER_KEY] || {}; friendUberLedger = balances.__friendUberLedger || {}; fishingLedger = balances[FISHING_LEDGER_KEY] || { cooldowns: {}, interactions: {} }; delete balances[BIRTHDAY_LEDGER_KEY]; delete balances.__friendUberLedger; delete balances[FISHING_LEDGER_KEY]; } catch { balances = {}; birthdayLedger = {}; friendUberLedger = {}; fishingLedger = { cooldowns: {}, interactions: {} }; } loaded = true; }
+async function persist() { const snapshot = { ...balances, [BIRTHDAY_LEDGER_KEY]: birthdayLedger, __friendUberLedger: friendUberLedger, [FISHING_LEDGER_KEY]: fishingLedger }; writeQueue = writeQueue.catch(() => {}).then(async () => { const temporaryPath = `${storePath}.tmp`; await fs.writeFile(temporaryPath, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8'); await fs.rename(temporaryPath, storePath); }); return writeQueue; }
 function validateUser(userId) { if (!userId || typeof userId !== 'string') throw new TypeError('A Discord user ID is required.'); }
 function validateAmount(amount) { if (!Number.isInteger(amount) || amount < 0) throw new RangeError('Fish amounts must be non-negative whole integers.'); }
 
@@ -103,4 +104,37 @@ async function hasBirthdayReward(guildId, userId, celebrationYear) {
   return Boolean(birthdayLedger[`${guildId}:${userId}:${celebrationYear}`]);
 }
 
-module.exports = { getFishBalance, addFish, removeFish, hasFish, transferFish, transferAvailableFish, confiscateFish, resolveGamble, friendUberCredit, friendUberHold, awardBirthdayFish, hasBirthdayReward };
+const FISHING_COOLDOWN_MS = 30 * 1000;
+async function processFishing({ interactionId, userId, guildId = null, selectCatch, now = Date.now() }) {
+  validateUser(userId);
+  validateUser(interactionId);
+  if (typeof selectCatch !== 'function' || !Number.isSafeInteger(now) || now < 0) throw new TypeError('A valid fishing selector and timestamp are required.');
+  return mutate(async () => {
+    await load();
+    const prior = fishingLedger.interactions[interactionId];
+    if (prior) return { ...prior, duplicate: true };
+
+    const previousAt = fishingLedger.cooldowns[userId];
+    const remainingMs = previousAt === undefined ? 0 : Math.max(0, previousAt + FISHING_COOLDOWN_MS - now);
+    if (remainingMs > 0) {
+      const rejected = { status: 'cooldown', interactionId, userId, guildId, remainingMs, timestamp: now };
+      fishingLedger.interactions[interactionId] = rejected;
+      try { await persist(); return { ...rejected, duplicate: false }; }
+      catch (error) { delete fishingLedger.interactions[interactionId]; throw error; }
+    }
+
+    const catchResult = selectCatch();
+    validateAmount(catchResult?.reward);
+    if (!catchResult?.id) throw new TypeError('A valid fishing result is required.');
+    const before = balances[userId] || 0;
+    const previousCooldown = previousAt;
+    const result = { status: 'caught', interactionId, userId, guildId, catch: catchResult, fishAwarded: catchResult.reward, timestamp: now, balance: before + catchResult.reward };
+    balances[userId] = result.balance;
+    fishingLedger.cooldowns[userId] = now;
+    fishingLedger.interactions[interactionId] = result;
+    try { await persist(); return { ...result, duplicate: false }; }
+    catch (error) { balances[userId] = before; if (previousCooldown === undefined) delete fishingLedger.cooldowns[userId]; else fishingLedger.cooldowns[userId] = previousCooldown; delete fishingLedger.interactions[interactionId]; throw error; }
+  });
+}
+
+module.exports = { getFishBalance, addFish, removeFish, hasFish, transferFish, transferAvailableFish, confiscateFish, resolveGamble, friendUberCredit, friendUberHold, awardBirthdayFish, hasBirthdayReward, processFishing, FISHING_COOLDOWN_MS };
