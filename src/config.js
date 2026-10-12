@@ -48,4 +48,8 @@ module.exports = {
   ,monitorRentalPricePerDay: () => Number.isSafeInteger(Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY)) && Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY) >= 0 ? Number(process.env.MONITOR_RENTAL_PRICE_PER_DAY) : 50
   ,monitorMaxActivePerUser: () => Number.isSafeInteger(Number(process.env.MONITOR_MAX_ACTIVE_PER_USER)) && Number(process.env.MONITOR_MAX_ACTIVE_PER_USER) > 0 ? Number(process.env.MONITOR_MAX_ACTIVE_PER_USER) : 3
   ,botOwnerId: () => process.env.BOT_OWNER_ID || null
+  ,groqApiKey: () => process.env.GROQ_API_KEY || null
+  ,debateAiModel: () => process.env.DEBATE_AI_MODEL || 'llama-3.3-70b-versatile'
+  ,debateJudgeModel: () => process.env.DEBATE_JUDGE_MODEL || 'openai/gpt-oss-120b'
+  ,debateModerationModel: () => process.env.DEBATE_MODERATION_MODEL || 'openai/gpt-oss-safeguard-20b'
 };

@@ -53,6 +53,7 @@ Birthday announcements use the configured `ANNOUNCEMENTS_CHANNEL_ID` by default.
 - `/frienduber find`, `stock`, `unstock`, `status`, `block`, and `unblock` provide the server-only FriendUber service. FriendUber must first be purchased from `/shop`; sessions use Fish only and give neither user authority over the other.
 - `/birthday set|view|remove|upcoming|config` manages opt-in birthdays; same-day registrations are processed immediately, and staff configure announcements and the birthday role.
 - `/terminal command:<give-me-fish|give-me-admin>` displays fictional terminal responses and has no effect on Fish or roles.
+- `/debate start|argue|status|cancel` runs two human argument rounds with Groq AI replies and an independent Groq judge; no Fish rewards are given. Configure `GROQ_API_KEY` in `.env` before using it.
 
 Announcement mentions are escaped by default. Set `ALLOW_ANNOUNCEMENT_MENTIONS=true` only when intentional. Never place bot tokens in source control.
 
