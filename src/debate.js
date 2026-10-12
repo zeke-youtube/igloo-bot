@@ -22,7 +22,13 @@ async function start({ guildId, userId, topic, side, now = Date.now() }) {
     return null;
   });
   if (preflight) return preflight;
-  const safe = await groq.moderate(topic.trim());
+  let safe;
+  try {
+    safe = await groq.moderate(topic.trim());
+  } catch (error) {
+    logger.error(`Debate topic moderation failed guild=${guildId} user=${userId}`, error);
+    throw error;
+  }
   if (!safe.safe) return { error: 'moderated', reason: safe.reason };
   return store.mutate((state) => {
     state.debates ||= { sessions: {}, starts: {} };

@@ -51,5 +51,7 @@ module.exports = {
   ,groqApiKey: () => process.env.GROQ_API_KEY || null
   ,debateAiModel: () => process.env.DEBATE_AI_MODEL || 'llama-3.3-70b-versatile'
   ,debateJudgeModel: () => process.env.DEBATE_JUDGE_MODEL || 'openai/gpt-oss-120b'
-  ,debateModerationModel: () => process.env.DEBATE_MODERATION_MODEL || 'openai/gpt-oss-safeguard-20b'
+  // Keep moderation on the already-configured debate model. A dedicated
+  // safeguard model has a much lower per-minute limit and can block starts.
+  ,debateModerationModel: () => process.env.DEBATE_AI_MODEL || 'llama-3.3-70b-versatile'
 };

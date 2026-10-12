@@ -23,7 +23,7 @@ async function setup() {
   global.fetch = async (_url, options) => {
     const body = JSON.parse(options.body);
     calls.push(body);
-    if (body.model.includes('safeguard')) {
+    if (body.messages[0].content.includes('debate safety moderator')) {
       const input = body.messages.at(-1).content;
       return response(JSON.stringify(input.includes('BLOCK_ME') ? { safe: false, reason: 'Not suitable for debate' } : { safe: true, reason: '' }));
     }
@@ -58,7 +58,7 @@ test('debate persists a two-round Human vs AI flow and uses a separate judge mod
   assert.equal(second.session.rounds, 2);
   assert.equal(second.session.transcript.length, 4);
   assert.ok(calls.some((call) => call.model === 'openai/gpt-oss-120b'));
-  assert.equal(calls.filter((call) => call.model === 'llama-3.3-70b-versatile').length, 2);
+  assert.equal(calls.filter((call) => call.model === 'llama-3.3-70b-versatile' && call.messages[0].content.includes('You are one side')).length, 2);
   assert.equal(JSON.parse(await fs.readFile(path.join(dataDir, 'member-features.json'), 'utf8')).fishBalances, undefined);
 
   const restart = spawnSync(process.execPath, ['-e', `const d=require('./src/debate'); d.get('guild','human').then(s=>{if(s.phase!=='COMPLETE'||s.rounds!==2||!s.judgement)process.exit(1)}).catch(()=>process.exit(2))`], { cwd: path.join(__dirname, '..'), env: { ...process.env, IGLOOBOT_DATA_DIR: dataDir }, encoding: 'utf8' });
@@ -74,6 +74,22 @@ test('moderation blocks unsafe topics and arguments without consuming turns', as
   const blockedArgument = await debate.submit({ guildId: 'guild', userId: 'safe', interactionId: 'unsafe-turn', text: 'BLOCK_ME argument', now: 10_001 });
   assert.equal(blockedArgument.error, 'moderated');
   assert.equal((await debate.get('guild', 'safe')).rounds, 0);
+});
+
+test('moderation reuses the configured debate model instead of a separate low-quota model', async () => {
+  await setup();
+  const config = require('../src/config');
+  const previous = process.env.DEBATE_AI_MODEL;
+  process.env.DEBATE_AI_MODEL = 'test-debate-model';
+  try {
+    assert.equal(config.debateModerationModel(), 'test-debate-model');
+    const started = await debate.start({ guildId: 'guild', userId: 'model-check', topic: 'Should libraries be open late?', side: 'For' });
+    assert.ok(started.session);
+    assert.equal(calls[0].model, 'test-debate-model');
+  } finally {
+    if (previous === undefined) delete process.env.DEBATE_AI_MODEL;
+    else process.env.DEBATE_AI_MODEL = previous;
+  }
 });
 
 test('Groq 429 errors retry and configured models receive bounded requests', async () => {
