@@ -3,6 +3,7 @@ const path = require('node:path');
 
 const storePath = path.join(process.env.IGLOOBOT_DATA_DIR || path.join(__dirname, 'data'), 'fish-balances.json');
 let balances = {};
+let friendUberLedger = {};
 let loaded = false;
 let writeQueue = Promise.resolve();
 let mutationQueue = Promise.resolve();
@@ -10,7 +11,8 @@ const BIRTHDAY_LEDGER_KEY = '__birthdayRewardLedger';
 let birthdayLedger = {};
 
 async function load() { if (loaded) return; try { balances = JSON.parse(await fs.readFile(storePath, 'utf8')); birthdayLedger = balances[BIRTHDAY_LEDGER_KEY] || {}; delete balances[BIRTHDAY_LEDGER_KEY]; } catch { balances = {}; birthdayLedger = {}; } loaded = true; }
-async function persist() { const snapshot = { ...balances, [BIRTHDAY_LEDGER_KEY]: birthdayLedger }; writeQueue = writeQueue.then(async () => { const temporaryPath = `${storePath}.tmp`; await fs.writeFile(temporaryPath, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8'); await fs.rename(temporaryPath, storePath); }); return writeQueue; }
+async function load() { if (loaded) return; try { balances = JSON.parse(await fs.readFile(storePath, 'utf8')); birthdayLedger = balances[BIRTHDAY_LEDGER_KEY] || {}; friendUberLedger = balances.__friendUberLedger || {}; delete balances[BIRTHDAY_LEDGER_KEY]; delete balances.__friendUberLedger; } catch { balances = {}; birthdayLedger = {}; friendUberLedger = {}; } loaded = true; }
+async function persist() { const snapshot = { ...balances, [BIRTHDAY_LEDGER_KEY]: birthdayLedger, __friendUberLedger: friendUberLedger }; writeQueue = writeQueue.then(async () => { const temporaryPath = `${storePath}.tmp`; await fs.writeFile(temporaryPath, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8'); await fs.rename(temporaryPath, storePath); }); return writeQueue; }
 function validateUser(userId) { if (!userId || typeof userId !== 'string') throw new TypeError('A Discord user ID is required.'); }
 function validateAmount(amount) { if (!Number.isInteger(amount) || amount < 0) throw new RangeError('Fish amounts must be non-negative whole integers.'); }
 
@@ -21,6 +23,37 @@ async function removeFish(userId, amount) { validateUser(userId); validateAmount
 async function transferFish(fromUserId, toUserId, amount) { validateUser(fromUserId); validateUser(toUserId); validateAmount(amount); if (amount < 1) throw new RangeError('Transfer amounts must be positive whole integers.'); if (fromUserId === toUserId) throw new RangeError('Users cannot transfer fish to themselves.'); return mutate(async () => { await load(); const senderBefore = balances[fromUserId] || 0; const recipientBefore = balances[toUserId] || 0; if (senderBefore < amount) throw new RangeError('Insufficient fish.'); balances[fromUserId] = senderBefore - amount; balances[toUserId] = recipientBefore + amount; try { await persist(); return { senderBalance: balances[fromUserId], recipientBalance: balances[toUserId] }; } catch (error) { balances[fromUserId] = senderBefore; balances[toUserId] = recipientBefore; throw error; } }); }
 async function resolveGamble(userId, amount, won) { validateUser(userId); validateAmount(amount); if (amount < 1) throw new RangeError('Gamble amounts must be positive whole integers.'); return mutate(async () => { await load(); const before = balances[userId] || 0; if (before < amount) throw new RangeError('Insufficient fish.'); const after = won ? before + amount : before - amount; balances[userId] = after; try { await persist(); return { before, after, won, stake: amount }; } catch (error) { balances[userId] = before; throw error; } }); }
 async function hasFish(userId, amount) { validateUser(userId); validateAmount(amount); return (await getFishBalance(userId)) >= amount; }
+
+async function friendUberCredit(sessionId, kind, userId, amount) {
+  validateUser(userId); validateAmount(amount);
+  if (!sessionId || !['refund', 'payout'].includes(kind)) throw new TypeError('A FriendUber session and credit kind are required.');
+  const key = `${sessionId}:${kind}`;
+  return mutate(async () => {
+    await load();
+    if (friendUberLedger[key]) return { amount: friendUberLedger[key].amount, duplicate: true };
+    const before = balances[userId] || 0;
+    balances[userId] = before + amount;
+    friendUberLedger[key] = { userId, amount, at: Date.now() };
+    try { await persist(); return { amount, duplicate: false }; }
+    catch (error) { balances[userId] = before; delete friendUberLedger[key]; throw error; }
+  });
+}
+
+async function friendUberHold(sessionId, userId, amount) {
+  validateUser(userId); validateAmount(amount);
+  if (!sessionId || amount < 1) throw new TypeError('A FriendUber session and positive Fish amount are required.');
+  return mutate(async () => {
+    await load();
+    const key = `${sessionId}:hold`;
+    if (friendUberLedger[key]) return { held: true, duplicate: true };
+    const before = balances[userId] || 0;
+    if (before < amount) return { held: false, balance: before };
+    balances[userId] = before - amount;
+    friendUberLedger[key] = { userId, amount, at: Date.now() };
+    try { await persist(); return { held: true, duplicate: false, balance: balances[userId] }; }
+    catch (error) { balances[userId] = before; delete friendUberLedger[key]; throw error; }
+  });
+}
 
 async function transferAvailableFish(fromUserId, toUserId, requestedAmount) {
   validateUser(fromUserId); validateUser(toUserId); validateAmount(requestedAmount);
@@ -70,4 +103,4 @@ async function hasBirthdayReward(guildId, userId, celebrationYear) {
   return Boolean(birthdayLedger[`${guildId}:${userId}:${celebrationYear}`]);
 }
 
-module.exports = { getFishBalance, addFish, removeFish, hasFish, transferFish, transferAvailableFish, confiscateFish, resolveGamble, awardBirthdayFish, hasBirthdayReward };
+module.exports = { getFishBalance, addFish, removeFish, hasFish, transferFish, transferAvailableFish, confiscateFish, resolveGamble, friendUberCredit, friendUberHold, awardBirthdayFish, hasBirthdayReward };

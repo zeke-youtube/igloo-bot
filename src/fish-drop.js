@@ -53,6 +53,7 @@ async function expireActiveDrop() {
 }
 
 async function postDrop(client, now = Date.now(), { bypassActivityCheck = false } = {}) {
+  if (await require('./bot-mode').isClosed()) return null;
   const channelId = config.fishDropChannelId();
   const channel = channelId ? await client.channels.fetch(channelId).catch((error) => { logger.error(`Fish Drop channel fetch failed for ${channelId}`, error); return null; }) : null;
   if (!channel?.isTextBased() || typeof channel.send !== 'function') { logger.error(`Fish Drop skipped: configured channel ${channelId || '(missing)'} is unavailable or not text-capable.`); return null; }
